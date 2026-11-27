@@ -1,0 +1,48 @@
+ordem: 8
+nome: Beleza
+categorias: salão|beleza|barbear|manicure|estétic|cabeleir|sobrancelh|depila|maquia
+voz: Leve, próximo e caprichado. Fala de cuidado e de horário marcado.
+tom: tecnico
+secoes:
+- serviços
+- como agendar
+- o ambiente
+- dúvidas
+faq:
+- Precisa agendar?
+- Atendem por ordem de chegada?
+- Quanto tempo leva o serviço?
+- Aceitam cartão e Pix?
+icones:
+- tesoura
+- espelho
+- calendario
+- estrela
+templates:
+- '05'
+- '07'
+- '06'
+- '04'
+fontes:
+  titulo:
+  - Playfair Display
+  - serif
+  texto:
+  - DM Sans
+  - sans-serif
+claro:
+  fundo: '#fbf3f1'
+  superficie: '#ffffff'
+  texto: '#2a1618'
+  suave: '#634649'
+  acentos:
+  - '#9c2f5a'
+  - '#7b3f8c'
+  destaque: '#f4c2cf'
+escuro:
+  fundo: '#1a0f12'
+  superficie: '#26161b'
+  texto: '#f7e9ec'
+  suave: '#cfb2b8'
+  acento: '#f08bb0'
+  destaque: '#f7c4d6'

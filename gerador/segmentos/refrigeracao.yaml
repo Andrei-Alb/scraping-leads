@@ -1,0 +1,48 @@
+ordem: 3
+nome: Refrigeração e climatização
+categorias: refrigera|climatiza|ar.condicionado|ar condicionado
+voz: Direto e técnico, mas simples. Fala de conforto, prazo e serviço bem feito.
+tom: tecnico
+secoes:
+- serviços
+- como pedir orçamento
+- área atendida
+- dúvidas
+faq:
+- Fazem visita para orçamento?
+- Atendem em qual bairro?
+- Quanto tempo leva a instalação?
+- Fazem limpeza preventiva?
+icones:
+- floco
+- ferramenta
+- termometro
+- casa
+templates:
+- '06'
+- 08
+- '03'
+- '02'
+fontes:
+  titulo:
+  - Space Grotesk
+  - sans-serif
+  texto:
+  - Inter
+  - sans-serif
+claro:
+  fundo: '#eef5fb'
+  superficie: '#ffffff'
+  texto: '#0d1b2a'
+  suave: '#41556b'
+  acentos:
+  - '#0057b8'
+  - '#0e6a8a'
+  destaque: '#9ad8f5'
+escuro:
+  fundo: '#07131f'
+  superficie: '#0d1f31'
+  texto: '#e6f2fb'
+  suave: '#9fb7cb'
+  acento: '#5cc8f5'
+  destaque: '#a9e6ff'

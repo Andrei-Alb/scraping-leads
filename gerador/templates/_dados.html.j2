@@ -1,0 +1,86 @@
+{#- Só dados e comportamento comuns a todos os templates. Nenhum estilo aqui: cada template desenha tudo.
+    Uso no topo do template:  {% import "_dados.html.j2" as d with context %}
+    Links prontos: d.tel_link, d.wa_link, d.rota_google, d.rota_waze, d.rota_apple, d.mapa_src, d.avaliar.
+    Os links de mapa/rota ficam vazios quando o lead não tem coordenadas; aí o template não mostra o bloco. -#}
+{%- set tel_link = "tel:+55" ~ tel -%}
+{%- set wa_link = ("https://wa.me/" ~ wa ~ "?text=" ~ (c.mensagem_whatsapp | urlencode)) if wa else tel_link -%}
+{%- set geo = lead.latitude and lead.longitude -%}
+{%- set ll = ("%s,%s" | format(lead.latitude, lead.longitude)) if geo else "" -%}
+{%- set rota_google = ("https://www.google.com/maps/dir/?api=1&destination=" ~ ll ~ "&destination_place_id=" ~ lead.place_id) if geo else "" -%}
+{%- set rota_waze = ("https://waze.com/ul?ll=" ~ ll ~ "&navigate=yes") if geo else "" -%}
+{%- set rota_apple = ("https://maps.apple.com/?daddr=" ~ ll) if geo else "" -%}
+{%- set mapa_src = ("https://www.google.com/maps?q=" ~ ll ~ "&z=16&output=embed") if geo else "" -%}
+{%- set avaliar = "https://search.google.com/local/writereview?placeid=" ~ lead.place_id -%}
+
+{#- <head> comum: meta, SEO, schema.org. O template põe depois as fontes e o <style> dele. -#}
+{% macro head(cor_tema) -%}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ c.meta_title }}</title>
+<meta name="description" content="{{ c.meta_description }}">
+<meta name="robots" content="noindex">{# demo privada: não indexar #}
+<meta property="og:title" content="{{ c.meta_title }}">
+<meta property="og:description" content="{{ c.meta_description }}">
+<meta name="theme-color" content="{{ cor_tema }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script type="application/ld+json">{{ schema | safe }}</script>
+{%- endmacro %}
+
+{#- Comportamento sem estilo. Marcação esperada (o template escolhe tags e classes visuais):
+    horário:  [data-horario='<json>'] contendo [data-agora] (recebe o texto e data-aberto="1|0")
+              e um item [data-dia="0..6"] por dia (o de hoje recebe data-hoje)
+    copiar:   button[data-copiar="<texto>"] com um [data-copiar-rotulo] dentro (troca o texto por 2 s) -#}
+{% macro script() -%}
+{#- Filhos com visibility própria (menus abertos) furariam um visibility herdado; por isso o !important no * também.
+    O CSS vai para o <head> por JS: alguns templates trocam "-" entre letras por hífen inseparável nos textos do
+    <body>, e um <style> no body perderia "barra-fixa" e "pointer-events". -#}
+<script>
+document.head.append(Object.assign(document.createElement("style"), { textContent: ".barra-fixa.recolhida{opacity:0;translate:0 140%;transition:opacity .2s,translate .25s cubic-bezier(.2,.8,.2,1)}.barra-fixa.recolhida,.barra-fixa.recolhida *{visibility:hidden!important;pointer-events:none!important}" }));
+(() => {
+  // Contato fixo de baixo recolhe onde a página já mostra os próprios botões (contato, mapa, rodapé):
+  // ali ele só serviria para cobrir alvo de toque. Cabeçalho preso no alto não entra.
+  const zonas = document.querySelectorAll('#contato, #chegar, [aria-labelledby="contato-t"], footer');
+  const fixos = [...document.querySelectorAll(".barra-fixa")].filter((b) => getComputedStyle(b).position === "fixed" && b.getBoundingClientRect().bottom > innerHeight * 0.75);
+  if (zonas.length && fixos.length) {
+    const vistas = new Set();
+    const io = new IntersectionObserver((es) => {
+      es.forEach((x) => (x.isIntersecting ? vistas.add(x.target) : vistas.delete(x.target)));
+      fixos.forEach((b) => b.classList.toggle("recolhida", vistas.size > 0));
+    });
+    zonas.forEach((z) => io.observe(z));
+  }
+})();
+(() => {
+  // Horário: o status vem do relógio de Santarém, não do aparelho, para não mentir a quem está fora.
+  const hor = document.querySelector("[data-horario]");
+  if (hor) {
+    const semana = JSON.parse(hor.dataset.horario);
+    const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: "America/Santarem", weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date()).map((x) => [x.type, x.value]));
+    const dia = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(p.weekday), min = +p.hour * 60 + +p.minute;
+    const hh = (m) => String(Math.floor(m / 60) % 24).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+    const faixa = semana[dia].faixas.find(([a, b]) => min >= a && min < b);
+    const agora = hor.querySelector("[data-agora]");
+    hor.querySelector(`[data-dia="${dia}"]`)?.setAttribute("data-hoje", "");
+    if (agora) {
+      agora.dataset.aberto = faixa ? "1" : "0";
+      if (faixa) agora.textContent = `Aberto agora · fecha às ${hh(faixa[1])}`;
+      else {
+        let prox = null;
+        for (let k = 0; k < 7 && !prox; k++) {
+          const d = (dia + k) % 7, f = semana[d].faixas.find(([a]) => k > 0 || a > min);
+          if (f) prox = (k === 0 ? "hoje" : k === 1 ? "amanhã" : semana[d].dia.toLowerCase()) + " às " + hh(f[0]);
+        }
+        agora.textContent = "Fechado agora" + (prox ? ` · abre ${prox}` : "");
+      }
+    }
+  }
+  document.querySelectorAll("[data-copiar]").forEach((b) => b.addEventListener("click", async () => {
+    const r = b.querySelector("[data-copiar-rotulo]") || b, antes = r.textContent;
+    try { await navigator.clipboard.writeText(b.dataset.copiar); r.textContent = "Endereço copiado"; }
+    catch { r.textContent = "Não deu para copiar"; }
+    setTimeout(() => (r.textContent = antes), 2200);
+  }));
+})();
+</script>
+{%- endmacro %}

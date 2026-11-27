@@ -1,0 +1,80 @@
+empresa
+loja
+comércio
+serviços
+médico
+clínica
+dentista
+hospital
+laboratório
+psicólogo
+nutricionista
+fisioterapia
+farmácia
+ótica
+clínica veterinária
+pet shop
+clínica de estética
+salão de beleza
+barbearia
+manicure
+academia
+advogado
+contabilidade
+imobiliária
+arquiteto
+engenharia
+restaurante
+lanchonete
+pizzaria
+açaí
+padaria
+sorveteria
+bar
+hotel
+pousada
+agência de turismo
+supermercado
+mercadinho
+distribuidora
+açougue
+loja de roupas
+loja de calçados
+loja de celular
+assistência técnica
+informática
+papelaria
+gráfica
+material de construção
+loja de móveis
+eletrodomésticos
+autopeças
+oficina mecânica
+lava jato
+concessionária
+moto peças
+borracharia
+posto de combustível
+transportadora
+escola
+curso
+creche
+faculdade
+igreja
+floricultura
+joalheria
+loja de presentes
+loja de cosméticos
+fotógrafo
+eventos
+buffet
+gás
+vidraçaria
+serralheria
+marcenaria
+energia solar
+seguros
+banco
+lotérica
+despachante
+consultório

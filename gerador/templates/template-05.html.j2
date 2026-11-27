@@ -1,0 +1,454 @@
+{% import "_dados.html.j2" as d with context %}{% import "efeitos/_blocos.html.j2" as ef with context %}<!doctype html>
+<html lang="pt-BR">
+<head>
+{{ d.head("#f6eee0") }}
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --creme:#f6eee0; --creme-2:#efe2cc; --papel:#fffaf2;
+  --folha:#2f5a3a; --folha-2:#447a4f; --broto:#cfe0bf; --musgo:#e3ecd6;
+  --terra:#a9482a; --terra-2:#c96a45; --barro:#f3d6c3; --areia:#f5e3c8;
+  --tinta:#2b2620; --tinta-2:#5a5048; --branco:#fff; --claro:#f4efe4; --claro-2:#e4ddd0; --pessego:#f3c3a6;
+  --terra-escura:#8f3a20; --mel:#b98a2e; --vivo:#3c8a4a; --sombra:47 90 58;
+  --txt-musgo:#3f4a35; --txt-barro:#6b3320; --txt-areia:#5c4417;
+  --mola:linear(0,.009,.035 2.1%,.141 4.4%,.723 12.9%,.938 16.7%,1.017 19.4%,1.067,1.099 24.3%,1.108 26%,1.1 27.9%,1.042 33.9%,1.007 39.4%,.988 45.4%,1.001 61.1%,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--creme);color:var(--tinta);font:400 1.0625rem/1.65 Nunito,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Young Serif",Georgia,serif;font-weight:400;line-height:1.1;margin:0;color:var(--folha);overflow-wrap:break-word;hyphens:none;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+.num{font-family:Nunito,sans-serif;font-variant-numeric:tabular-nums}
+.casca{width:min(100% - 2.5rem,72rem);margin-inline:auto}
+section{position:relative;padding-block:clamp(4rem,10vw,7rem);overflow-x:clip}
+.olho{display:inline-flex;align-items:center;gap:.5rem;font-weight:800;font-size:1rem;letter-spacing:.04em;color:var(--terra);margin-bottom:.9rem}
+.olho svg{width:1.25rem;height:1.25rem}
+h2{font-size:clamp(1.9rem,6.4vw,3.2rem);max-width:20ch}
+.lead{font-size:clamp(1.0625rem,2.4vw,1.25rem);color:var(--tinta-2);max-width:40ch;margin-top:1rem}
+
+/* botões: pílulas macias */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6rem;min-height:3.25rem;padding:.8rem 1.6rem;border-radius:999px;font-weight:800;font-size:1.0625rem;text-decoration:none;border:0;cursor:pointer;font-family:inherit;transition:transform .5s var(--mola),background-color .2s}
+.btn:hover{transform:translateY(-3px) scale(1.03)}
+.btn:active{transform:scale(.96);transition-duration:.12s}
+.btn-terra{background:var(--terra);color:var(--branco)}
+.btn-terra:hover{background:var(--terra-escura)}
+.btn-folha{background:var(--folha);color:var(--branco)}
+.btn-claro{background:var(--papel);color:var(--folha);box-shadow:inset 0 0 0 2px var(--broto)}
+:focus-visible{outline:3px solid var(--terra);outline-offset:3px;border-radius:12px}
+
+/* blobs que respiram */
+.blob{position:absolute;pointer-events:none;border-radius:42% 58% 63% 37% / 41% 44% 56% 59%;animation:respira 14s ease-in-out infinite alternate}
+@keyframes respira{
+  0%{border-radius:42% 58% 63% 37% / 41% 44% 56% 59%;transform:rotate(0) scale(1)}
+  50%{border-radius:62% 38% 41% 59% / 55% 62% 38% 45%;transform:rotate(8deg) scale(1.04)}
+  100%{border-radius:37% 63% 52% 48% / 63% 37% 63% 37%;transform:rotate(-6deg) scale(.98)}
+}
+
+/* hero */
+.hero{padding-top:1.25rem;overflow-x:clip}
+.topo{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:2rem}
+.marca{display:flex;align-items:center;gap:.6rem;font-family:"Young Serif",serif;font-size:1.15rem;color:var(--folha);text-decoration:none;min-height:48px;min-width:0}
+.marca span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.marca svg{flex:none;width:2rem;height:2rem}
+.topo .btn{display:none}
+.hero-grade{display:grid;gap:2.5rem;align-items:center}
+.hero h1{font-size:clamp(2.2rem,9.5vw,4.6rem);letter-spacing:-.015em}
+.hero h1 em{font-style:italic;color:var(--terra)}
+.hero .lead{margin-top:1.25rem}
+.acoes{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem}
+.nota-semente{display:flex;align-items:center;gap:1rem;margin-top:2rem}
+.caroco{flex:none;display:grid;place-items:center;width:4.6rem;height:4.6rem;border-radius:62% 38% 55% 45%/55% 50% 50% 45%;background:var(--folha);color:var(--papel);rotate:-8deg;box-shadow:inset -6px -8px 0 rgb(0 0 0 / .12)}
+.caroco b{rotate:8deg;font:800 1.55rem/1 Nunito,sans-serif;font-variant-numeric:tabular-nums}
+.nota-semente p{font-size:1rem;line-height:1.35;color:var(--tinta-2)}
+.nota-semente p strong{display:block;color:var(--folha);font-size:1.0625rem}
+.folhinhas{display:flex;gap:.15rem;margin-bottom:.25rem;color:var(--folha-2)}
+.folhinhas svg{width:1rem;height:1rem}
+.ilha{position:relative;aspect-ratio:1;width:min(100%,26rem);margin-inline:auto}
+.ilha .blob{inset:0}
+.ilha .b1{background:var(--folha-2)}
+.ilha .b2{inset:12% -6% -4% 18%;background:var(--terra-2);opacity:.9;animation-duration:18s;animation-direction:alternate-reverse}
+.ilha .b3{inset:-4% 30% 58% -4%;background:var(--broto);animation-duration:11s}
+.ilha svg.planta{position:absolute;inset:14%;width:72%;height:72%}
+.ilha .etiqueta{position:absolute;left:4%;bottom:6%;background:var(--papel);border-radius:1.5rem 1.5rem 1.5rem .4rem;padding:.8rem 1.1rem;font-weight:800;color:var(--folha);box-shadow:0 12px 30px -14px rgb(var(--sombra) / .45);max-width:70%;font-size:1rem}
+.ilha .etiqueta small{display:block;font-weight:600;color:var(--tinta-2);font-size:.95rem}
+.folha-balanca{transform-origin:50% 100%;animation:balanca 6s ease-in-out infinite alternate}
+@keyframes balanca{from{transform:rotate(-4deg)}to{transform:rotate(5deg)}}
+
+/* serviços: seixos */
+.servicos{background:var(--papel);border-radius:3rem 3rem 0 0}
+.seixos{list-style:none;margin:2.5rem 0 0;padding:0;display:grid;gap:1rem}
+.seixo{padding:1.75rem 1.6rem;border-radius:2.4rem 3rem 2.2rem 3.4rem / 2.8rem 2.2rem 3.2rem 2.4rem;background:var(--musgo)}
+.seixo:nth-child(3n+2){background:var(--barro);border-radius:3.2rem 2.2rem 3rem 2.4rem / 2.4rem 3.2rem 2.4rem 3rem}
+.seixo:nth-child(3n){background:var(--areia);border-radius:2.2rem 3.4rem 2.6rem 3rem / 3rem 2.4rem 3.2rem 2.2rem}
+.seixo h3{font-size:1.4rem;margin-bottom:.5rem}
+.seixo p{color:var(--txt-musgo)}
+.seixo:nth-child(3n+2) p{color:var(--txt-barro)}
+.seixo:nth-child(3n) p{color:var(--txt-areia)}
+.seixo .pingo{display:block;width:2.4rem;height:2.4rem;margin-bottom:1rem;border-radius:46% 54% 60% 40% / 50% 42% 58% 50%;background:var(--folha-2)}
+.seixo:nth-child(3n+2) .pingo{background:var(--terra)}
+.seixo:nth-child(3n) .pingo{background:var(--mel)}
+
+/* diferenciais */
+.diferenciais{background:var(--folha);color:var(--claro);border-radius:3rem}
+.diferenciais h2,.diferenciais h3{color:var(--papel)}
+.diferenciais .olho{color:var(--pessego)}
+.diferenciais .blob{width:22rem;height:22rem;right:-8rem;top:-6rem;background:var(--folha-2);opacity:.45}
+.diferenciais .casca{position:relative}
+.dif-lista{list-style:none;margin:2.5rem 0 0;padding:0;display:grid;gap:1.25rem;position:relative}
+.dif-lista li{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:start;background:rgb(255 255 255 / .07);border-radius:999px 2rem 2rem 999px;padding:1.1rem 1.5rem 1.1rem 1.1rem}
+.dif-lista .bola{display:grid;place-items:center;width:3rem;height:3rem;border-radius:999px;background:var(--broto);color:var(--folha)}
+.dif-lista .bola svg{width:1.5rem;height:1.5rem}
+.dif-lista h3{font-size:1.25rem;margin:.35rem 0 .3rem}
+.dif-lista p{color:var(--claro-2)}
+
+/* passos: trilha */
+.trilha{list-style:none;margin:2.5rem 0 0;padding:0;display:grid;gap:1.5rem;counter-reset:p}
+.trilha li{position:relative;padding:1.5rem 1.5rem 1.5rem 5.25rem;background:var(--papel);border-radius:2.5rem;min-height:5.5rem}
+.trilha li::before{counter-increment:p;content:counter(p);position:absolute;left:1rem;top:1.1rem;display:grid;place-items:center;width:3.25rem;height:3.25rem;border-radius:58% 42% 50% 50% / 50% 55% 45% 50%;background:var(--terra);color:var(--branco);font:800 1.35rem/1 Nunito,sans-serif;font-variant-numeric:tabular-nums}
+.trilha h3{font-size:1.3rem;margin-bottom:.35rem}
+.trilha p{color:var(--tinta-2)}
+
+/* contato */
+.contato{background:var(--areia);border-radius:3rem}
+.cont-grade{display:grid;gap:1.25rem;margin-top:2.5rem}
+.cartao{background:var(--papel);border-radius:2.25rem;padding:1.6rem}
+.cartao h3{font-size:1.3rem;margin-bottom:1rem}
+.lista-acoes{display:grid;gap:.6rem}
+.acao{display:flex;align-items:center;gap:.85rem;min-height:3.25rem;padding:.5rem 1rem .5rem .5rem;border-radius:999px;background:var(--creme);color:var(--tinta);text-decoration:none;font-weight:700;border:0;font:inherit;font-weight:700;cursor:pointer;width:100%;text-align:left;transition:transform .5s var(--mola),background-color .2s}
+.acao:hover{background:var(--musgo);transform:translateX(4px)}
+.acao i{display:grid;place-items:center;flex:none;width:2.4rem;height:2.4rem;border-radius:999px;background:var(--broto);color:var(--folha)}
+.acao i svg{width:1.2rem;height:1.2rem}
+.endereco{color:var(--tinta-2);margin-bottom:1rem}
+.agora{display:inline-flex;align-items:center;gap:.5rem;font-weight:800;padding:.4rem 1rem;border-radius:999px;background:var(--creme);margin-bottom:1rem}
+.agora::before{content:"";width:.7rem;height:.7rem;border-radius:999px;background:var(--tinta-2)}
+.agora[data-aberto="1"]{background:var(--musgo);color:var(--folha)}
+.agora[data-aberto="1"]::before{background:var(--vivo);animation:pulsa 2s ease-in-out infinite}
+.agora[data-aberto="0"]{background:var(--barro);color:var(--txt-barro)}
+.agora[data-aberto="0"]::before{background:var(--terra)}
+@keyframes pulsa{50%{transform:scale(1.5);opacity:.5}}
+.dias{margin:0;display:grid;gap:.15rem}
+.dias div{display:flex;justify-content:space-between;gap:1rem;padding:.45rem .9rem;border-radius:999px}
+.dias dt,.dias dd{margin:0;font-size:1rem}
+.dias dd{font-variant-numeric:tabular-nums;text-align:right}
+.dias [data-hoje]{background:var(--musgo);font-weight:800;color:var(--folha)}
+.mapa-bloco{position:relative}
+.mapa-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--musgo);border-radius:3rem 5rem 3.5rem 6rem/4rem 3rem 5rem 3rem;box-shadow:0 0 0 .55rem var(--papel),0 0 0 .9rem var(--broto)}
+.mapa-wrap iframe{width:100%;height:100%;border:0;display:block}
+.placa{position:absolute;z-index:2;top:0;left:1rem;display:inline-flex;align-items:center;gap:.55rem;min-height:3.25rem;padding:.6rem 1.2rem;background:var(--terra);color:var(--branco);text-decoration:none;font-family:"Young Serif",serif;font-size:1.15rem;border-radius:1rem 1.8rem 1.2rem 1.5rem;rotate:-3deg;box-shadow:0 10px 22px -10px rgb(var(--sombra) / .7);transition:rotate .6s var(--mola),transform .6s var(--mola)}
+.placa:hover{rotate:1deg;transform:scale(1.04)}
+.placa svg{width:1.2rem;height:1.2rem}
+.pedras{list-style:none;margin:2rem 0 0;padding:0;display:flex;flex-wrap:wrap;gap:.9rem}
+.pedras li{flex:1 1 6.5rem}
+.pedras li:nth-child(2){translate:0 .9rem}
+.pedras a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;min-height:5.75rem;padding:.8rem;text-align:center;text-decoration:none;font-weight:800;color:var(--folha);background:var(--musgo);border-radius:48% 52% 44% 56%/56% 46% 54% 44%;transition:transform .6s var(--mola)}
+.pedras li:nth-child(2) a{background:var(--barro);color:var(--txt-barro);border-radius:56% 44% 52% 48%/44% 56% 44% 56%}
+.pedras li:nth-child(3) a{background:var(--papel);color:var(--txt-areia);border-radius:44% 56% 58% 42%/52% 44% 56% 48%}
+.pedras a:hover{transform:translateY(-4px) rotate(-3deg)}
+.pedras svg{width:1.5rem;height:1.5rem}
+.pedras-titulo{font-size:1.5rem;margin-top:1.5rem}
+
+/* FAQ: sementes que brotam */
+.faq-lista{margin-top:2.5rem;display:grid;gap:1rem;counter-reset:q}
+details{counter-increment:q;background:var(--papel);border-radius:2rem 2rem 2rem .6rem;transition:background-color .3s,border-radius .6s var(--mola)}
+details[open]{background:var(--musgo);border-radius:.6rem 2rem 2rem 2rem}
+summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:1rem;min-height:3.5rem;padding:1.1rem 1.5rem 1.1rem 1rem;font-weight:800;font-size:1.0625rem;color:var(--folha)}
+summary::-webkit-details-marker{display:none}
+.semente{position:relative;display:grid;place-items:center;width:3rem;height:3rem;border-radius:50%/60% 60% 40% 40%;background:var(--areia);color:var(--txt-areia);font:800 1rem/1 Nunito,sans-serif;font-variant-numeric:tabular-nums;transition:background-color .3s}
+.semente::before{content:counter(q,decimal-leading-zero)}
+.semente svg{position:absolute;left:55%;bottom:80%;width:1.6rem;height:1.6rem;color:var(--folha-2);transform-origin:10% 100%;transform:scale(0) rotate(-40deg);transition:transform .7s var(--mola)}
+details[open] .semente{background:var(--folha);color:var(--papel)}
+details[open] .semente svg{transform:none}
+details p{padding:0 1.5rem 1.4rem;color:var(--tinta-2)}
+
+/* CTA final */
+.final{text-align:center;overflow:clip}
+.final .bolha{position:relative;background:var(--terra);color:var(--branco);border-radius:3.5rem;padding:clamp(3rem,8vw,5rem) 1.5rem;overflow:clip}
+.final .blob{width:18rem;height:18rem;background:var(--terra-2);left:-6rem;bottom:-8rem;opacity:.7}
+.final .blob.dois{left:auto;right:-5rem;top:-7rem;bottom:auto;background:var(--terra-escura);animation-duration:17s}
+.final h2{color:var(--branco);margin-inline:auto;position:relative}
+.final p{position:relative;max-width:36ch;margin:1rem auto 0;font-size:1.15rem;color:var(--papel)}
+.final .acoes{justify-content:center;position:relative}
+.final .btn-claro{box-shadow:none}
+
+/* rodapé: morro de quintal */
+footer{position:relative;margin-top:3.5rem;background:var(--folha);color:var(--claro);padding:2.5rem 0 calc(8rem + env(safe-area-inset-bottom))}
+.morro{position:absolute;left:0;bottom:calc(100% - 1px);width:100%;height:3rem;display:block;color:var(--folha)}
+footer .casca{display:grid;gap:1.25rem}
+.rodape-nome{font-family:"Young Serif",serif;font-size:clamp(1.5rem,5vw,2.2rem);line-height:1.15;color:var(--papel);overflow-wrap:break-word}
+footer p{color:var(--claro-2);font-size:1rem}
+.rodape-links{display:flex;flex-wrap:wrap;gap:0 1.5rem}
+footer a{display:inline-flex;align-items:center;gap:.5rem;min-height:48px;color:var(--papel);text-decoration-color:var(--pessego);text-underline-offset:5px;font-weight:700}
+footer a svg{width:1.2rem;height:1.2rem;color:var(--pessego)}
+
+/* contato: broto flutuante que abre em leque */
+.quintal-contato{position:fixed;right:max(1rem,env(safe-area-inset-right));bottom:calc(1rem + env(safe-area-inset-bottom));z-index:30;width:4.25rem;height:4.25rem}
+.broto-btn{position:relative;z-index:2;display:grid;place-items:center;width:4.25rem;height:4.25rem;border:0;padding:0;cursor:pointer;color:var(--branco);background:var(--terra);border-radius:58% 42% 52% 48%/48% 56% 44% 52%;box-shadow:0 14px 30px -10px rgb(var(--sombra) / .7);transition:transform .6s var(--mola),border-radius .6s var(--mola),background-color .2s}
+.broto-btn:hover{transform:scale(1.06)}
+.broto-btn:active{transform:scale(.92);transition-duration:.12s}
+.broto-btn svg{grid-area:1/1;width:1.9rem;height:1.9rem;transition:transform .6s var(--mola),opacity .2s}
+.broto-btn .abre{grid-area:1/1;display:grid}
+.broto-btn .fecha{opacity:0;transform:rotate(-90deg) scale(.4)}
+.aberto .broto-btn{background:var(--folha);border-radius:50%}
+.aberto .broto-btn .abre svg{opacity:0;transform:rotate(90deg) scale(.4)}
+.aberto .broto-btn .fecha{opacity:1;transform:none}
+.leque{list-style:none;margin:0;padding:0}
+.leque li{position:absolute;left:50%;top:50%;width:6.25rem;margin:-1.75rem 0 0 -3.125rem;opacity:0;visibility:hidden;transform:scale(.3);transition:transform .45s ease-in,opacity .2s,visibility 0s .45s}
+.aberto .leque li{opacity:1;visibility:visible;transform:translate(var(--x),var(--y));transition:transform .75s var(--mola),opacity .25s,visibility 0s;transition-delay:calc(var(--k) * 60ms)}
+.leque a{display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none;font-weight:800;font-size:1rem;color:var(--folha)}
+.leque i{display:grid;place-items:center;width:3.5rem;height:3.5rem;background:var(--musgo);border-radius:62% 38% 58% 42%/50% 60% 40% 50%;box-shadow:0 10px 22px -10px rgb(var(--sombra) / .7)}
+.leque li:first-child i{background:var(--folha);color:var(--branco)}
+.leque li:last-child i{background:var(--barro);color:var(--txt-barro)}
+.leque i svg{width:1.5rem;height:1.5rem}
+.leque span{padding:.05rem .65rem;background:var(--papel);border-radius:999px;white-space:nowrap;box-shadow:0 6px 14px -8px rgb(var(--sombra) / .6)}
+
+/* entrada com mola */
+.js .brota{opacity:0;transform:translateY(28px) scale(.9)}
+.js .brota.viva{opacity:1;transform:none;transition:opacity .45s ease-out,transform .9s var(--mola);transition-delay:calc(var(--i,0) * 70ms)}
+
+@media (min-width:640px){
+  .seixos{grid-template-columns:1fr 1fr}
+  .cont-grade{grid-template-columns:1fr 1fr}
+  .mapa-bloco{grid-column:1/-1}
+  details p{padding-left:5rem}
+}
+@media (min-width:900px){
+  .hero-grade{grid-template-columns:1.1fr .9fr;gap:3rem}
+  .seixos{grid-template-columns:repeat(3,1fr)}
+  .seixo:nth-child(3n+2){transform:translateY(2rem)}
+  .seixo:nth-child(3n+2).brota:not(.viva){transform:translateY(calc(2rem + 28px)) scale(.9)}
+  .dif-lista{grid-template-columns:1fr 1fr}
+  .trilha{grid-template-columns:repeat(3,1fr)}
+  .trilha li{padding:5.25rem 1.6rem 1.75rem}
+  .trilha li::before{top:1.25rem;left:1.5rem}
+  .faq-lista{max-width:50rem}
+  .mapa-bloco{display:grid;grid-template-columns:1.5fr 1fr;gap:2.5rem;align-items:center}
+  .pedras{flex-direction:column}
+  .pedras li{flex:none;width:min(100%,14rem)}
+  .pedras li:nth-child(2){translate:2.5rem 0}
+}
+@media (min-width:1100px){
+  .topo .btn{display:inline-flex}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .js .brota{opacity:1;transform:none}
+}
+</style>
+{{ ef.estilo() }}
+</head>
+<body>
+<script>document.documentElement.classList.add("js")</script>
+{%- set svg_folha -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8 5-13 15-14-1 10-6 15-14 15"/><path d="M5 19 14 10"/></svg>{%- endset -%}
+{%- set svg_coracao -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>{%- endset -%}
+{%- set svg_contato -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>{%- endset -%}
+{%- set svg_copiar -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="3"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>{%- endset -%}
+{%- set svg_estrela -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>{%- endset -%}
+{%- set svg_carro -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16V11l2-5h10l2 5v5"/><path d="M3 16h18v3H3z"/><circle cx="7.5" cy="13" r=".5"/><circle cx="16.5" cy="13" r=".5"/></svg>{%- endset -%}
+{%- set svg_maca -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7c-3-2-8-1-8 5 0 5 4 9 6 9 1 0 1.5-.5 2-.5s1 .5 2 .5c2 0 6-4 6-9 0-6-5-7-8-5z"/><path d="M12 7c0-2 1-4 3-4"/></svg>{%- endset -%}
+{%- set icone_tel -%}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h2.5l1.6 4.2-2.2 1.5a11 11 0 0 0 5.9 5.9l1.5-2.2 4.2 1.6V17a3 3 0 0 1-3 3C10.4 20 4 13.6 4 6.5a3 3 0 0 1 3-3z"/></svg>{%- endset -%}
+{%- set icone_wa -%}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20.5l1.4-4A8.5 8.5 0 1 1 8.6 19.3z"/><path d="M9.2 9.3c.3 2.4 2.4 4.6 5 5.2l1-1.4-1.6-.9-.8.7a4 4 0 0 1-2.2-2.2l.7-.8-.9-1.6z"/></svg>{%- endset -%}
+{%- set icone_pin -%}<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-5.8-6.5-11a6.5 6.5 0 0 1 13 0c0 5.2-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>{%- endset -%}
+{%- set icone_x -%}<svg class="fecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>{%- endset -%}
+{%- set icone_broto -%}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 21v-7.5C6.5 13.5 4 10.5 4 6c4.5 0 7 2.5 7.5 6.5C12 8 14.5 5 20 4.5c0 5.5-3 8.5-7.5 8.8V21z"/></svg>{%- endset -%}
+
+<header class="hero">
+  <div class="casca">
+    <div class="topo">
+      <a class="marca" href="#">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path style="fill:var(--folha-2)" d="M20 3c9 0 17 6 17 16s-7 18-17 18S3 30 3 20 11 3 20 3z"/><path style="fill:var(--creme)" d="M13 27c0-8 5-13 14-14-1 9-5 14-13 14z"/></svg>
+        <span>{{ c.nome_exibicao }}</span>
+      </a>
+      <a class="btn btn-terra" href="{{ d.wa_link }}" target="_blank" rel="noopener">{{ icone_wa }}{{ c.cta }}</a>
+    </div>
+    <div class="hero-grade">
+      <div>
+        <p class="olho brota">{{ svg_folha }}{{ lead.categoria }}{% if lead.bairro %} · {{ lead.bairro }}{% endif %}, Santarém</p>
+        <h1 class="brota" style="--i:1">{{ c.headline|replace("-", "‑") }}</h1>
+        <p class="lead brota" style="--i:2">{{ c.subtitulo|replace("-", "‑") }}</p>
+        <div class="acoes brota" style="--i:3">
+          <a class="btn btn-terra"{{ ef.at("magnetico") }} href="{{ d.wa_link }}" target="_blank" rel="noopener">{{ icone_wa }}{{ c.cta }}</a>
+          <a class="btn btn-claro" href="{{ d.tel_link }}">{{ icone_tel }}Ligar</a>
+        </div>
+        {% if nota %}<div class="nota-semente brota" style="--i:4"><span class="caroco"><b>{{ nota }}</b></span><p><span class="folhinhas" aria-hidden="true">{% for _ in range(5) %}{{ icone_broto }}{% endfor %}</span><strong>Nota no Google</strong><span class="num">{{ lead.avaliacoes }}</span> avaliações de clientes</p></div>{% endif %}
+      </div>
+      <div class="ilha brota" style="--i:2" aria-hidden="true">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+        <div class="blob b3"></div>
+        <svg class="planta" viewBox="0 0 200 200">
+          <g class="folha-balanca">
+            <path d="M100 190V95" style="stroke:var(--creme)" stroke-width="6" stroke-linecap="round" fill="none"/>
+            <path d="M100 130c-35-2-58-24-60-58 34 2 57 24 60 58z" style="fill:var(--broto)"/>
+            <path d="M100 110c4-38 30-62 66-64-2 38-28 62-66 64z" style="fill:var(--creme)"/>
+            <path d="M100 150c-22 0-40-14-44-36 22 0 40 14 44 36z" style="fill:var(--musgo)"/>
+          </g>
+        </svg>
+        <div class="etiqueta">{{ c.nome_exibicao|truncate(34, true, "…") }}<small>{% if lead.bairro %}{{ lead.bairro }} · {% endif %}Santarém</small></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+{% if "parallax" in efeitos %}<div class="casca" style="padding-block:2rem 0">{{ ef.parallax() }}</div>{% endif %}
+<section class="servicos" aria-labelledby="t-serv">
+  <div class="casca">
+    <p class="olho">{{ svg_maca }}O que fazemos</p>
+    <h2 id="t-serv">Cuidado que cabe no seu dia</h2>
+    <ul class="seixos">
+      {% for s in c.servicos %}
+      <li class="seixo brota" style="--i:{{ loop.index0 % 3 }}"><span class="pingo" aria-hidden="true"></span><h3>{{ s.titulo|replace("-", "‑") }}</h3><p>{{ s.descricao|replace("-", "‑") }}</p></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="diferenciais" aria-labelledby="t-dif">
+  <div class="blob" aria-hidden="true"></div>
+  <div class="casca">
+    <p class="olho">{{ svg_folha }}Por que aqui</p>
+    <h2 id="t-dif">Do jeito que a gente gosta de ser atendido</h2>
+    <ul class="dif-lista">
+      {% for x in c.diferenciais %}
+      <li class="brota" style="--i:{{ loop.index0 % 2 }}"><span class="bola">{{ svg_coracao }}</span><div><h3>{{ x.titulo|replace("-", "‑") }}</h3><p>{{ x.descricao|replace("-", "‑") }}</p></div></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{{ ef.marquee("Quem vem, volta") }}
+
+{% if "pilha" in efeitos %}{{ ef.pilha(c.passos, "Como funciona", "Simples assim", "t-passos-sec") }}{% else %}
+<section aria-labelledby="t-passos">
+  <div class="casca">
+    <p class="olho">{{ svg_folha }}Simples assim</p>
+    <h2 id="t-passos">Como funciona</h2>
+    <ol class="trilha">
+      {% for p in c.passos %}
+      <li class="brota" style="--i:{{ loop.index0 }}"><h3>{{ p.titulo|replace("-", "‑") }}</h3><p>{{ p.descricao|replace("-", "‑") }}</p></li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+{% endif %}
+
+<section class="contato" id="contato" aria-labelledby="t-cont">
+  <div class="casca">
+    <p class="olho">{{ icone_pin }}Fale com a gente</p>
+    <h2 id="t-cont">Estamos pertinho de você</h2>
+    <div class="cont-grade">
+      <div class="cartao brota">
+        <h3>Atalhos</h3>
+        {% if lead.endereco %}<p class="endereco">{{ lead.endereco }}</p>{% endif %}
+        <div class="lista-acoes">
+          {% if wa %}<a class="acao" href="{{ d.wa_link }}" target="_blank" rel="noopener"><i>{{ icone_wa }}</i>Conversar no WhatsApp</a>{% endif %}
+          <a class="acao" href="{{ d.tel_link }}"><i>{{ icone_tel }}</i>Ligar <span class="num">{{ lead.telefone }}</span></a>
+          {% if vcf %}<a class="acao" href="{{ vcf }}" download="contato.vcf"><i>{{ svg_contato }}</i>Salvar contato</a>{% endif %}
+          {% if lead.endereco %}<button class="acao" type="button" data-copiar="{{ lead.endereco }}"><i>{{ svg_copiar }}</i><span data-copiar-rotulo>Copiar endereço</span></button>{% endif %}
+          <a class="acao" href="{{ d.avaliar }}" target="_blank" rel="noopener"><i>{{ svg_estrela }}</i>Avaliar no Google</a>
+        </div>
+      </div>
+      {% if horario %}
+      <div class="cartao brota" style="--i:1" data-horario='{{ horario|tojson }}'>
+        <h3>Horário</h3>
+        <p class="agora" data-agora>Confira o horário</p>
+        <dl class="dias">
+          {% for h in horario %}<div data-dia="{{ loop.index0 }}"><dt>{{ h.dia }}</dt><dd>{{ h.texto }}</dd></div>{% endfor %}
+        </dl>
+      </div>
+      {% endif %}
+      {% if d.mapa_src %}
+      <div class="mapa-bloco brota" id="chegar">
+        <div style="position:relative;padding-top:1.5rem">
+          <a class="placa" href="{{ d.rota_google }}" target="_blank" rel="noopener">{{ icone_pin }}Abrir rota</a>
+          <div class="mapa-wrap">
+            <iframe src="{{ d.mapa_src }}" loading="lazy" title="Mapa de {{ c.nome_exibicao }}" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+        <div>
+          <h3 class="pedras-titulo">Como chegar, pedra por pedra</h3>
+          <ul class="pedras">
+            <li><a href="{{ d.rota_google }}" target="_blank" rel="noopener">{{ icone_pin }}Google Maps</a></li>
+            <li><a href="{{ d.rota_waze }}" target="_blank" rel="noopener">{{ svg_carro }}Waze</a></li>
+            <li><a href="{{ d.rota_apple }}" target="_blank" rel="noopener">{{ svg_maca }}Apple Mapas</a></li>
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if c.faq %}
+<section aria-labelledby="t-faq">
+  <div class="casca">
+    <p class="olho">{{ svg_folha }}Dúvidas comuns</p>
+    <h2 id="t-faq">Perguntas de quem é daqui</h2>
+    <div class="faq-lista">
+      {% for f in c.faq %}
+      <details class="brota" style="--i:{{ loop.index0 % 3 }}"><summary><span class="semente" aria-hidden="true">{{ svg_folha }}</span><span>{{ f.pergunta|replace("-", "‑") }}</span></summary><p>{{ f.resposta|replace("-", "‑") }}</p></details>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="final" aria-labelledby="t-final">
+  <div class="casca">
+    <div class="bolha brota">
+      <div class="blob" aria-hidden="true"></div>
+      <div class="blob dois" aria-hidden="true"></div>
+      <h2 id="t-final">{{ c.cta_final_titulo|replace("-", "‑") }}</h2>
+      <p>{{ c.cta_final_texto|replace("-", "‑") }}</p>
+      <div class="acoes">
+        <a class="btn btn-claro" href="{{ d.wa_link }}" target="_blank" rel="noopener">{{ icone_wa }}{{ c.cta }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <svg class="morro" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 60V38C120 10 260 6 380 26s250 34 400 8 300-30 420-4v30z"/></svg>
+  <div class="casca">
+    <p class="rodape-nome">{{ lead.nome }}</p>
+    {% if lead.endereco %}<p>{{ lead.endereco|replace("-", "‑") }}</p>{% else %}<p>{% if lead.bairro %}{{ lead.bairro }} · {% endif %}Santarém‑PA</p>{% endif %}
+    <div class="rodape-links">
+      <a href="{{ d.tel_link }}">{{ icone_tel }}<span class="num">{{ lead.telefone }}</span></a>
+      {% if vcf %}<a href="{{ vcf }}" download="contato.vcf">{{ svg_contato }}Salvar contato</a>{% endif %}
+      <a href="{{ d.avaliar }}" target="_blank" rel="noopener">{{ svg_estrela }}Avaliar no Google</a>
+    </div>
+  </div>
+</footer>
+
+<nav class="quintal-contato barra-fixa" aria-label="Contato rápido">
+  <ul class="leque" id="leque">
+    {% if wa %}<li style="--k:0;--x:-.5rem;--y:-8.5rem"><a href="{{ d.wa_link }}" target="_blank" rel="noopener"><i>{{ icone_wa }}</i><span>WhatsApp</span></a></li>{% endif %}
+    <li style="--k:1;--x:-6.6rem;--y:-6.4rem"><a href="{{ d.tel_link }}"><i>{{ icone_tel }}</i><span>Ligar</span></a></li>
+    {% if d.mapa_src %}<li style="--k:2;--x:-9rem;--y:-1.6rem"><a href="#chegar"><i>{{ icone_pin }}</i><span>Como chegar</span></a></li>{% endif %}
+  </ul>
+  <button class="broto-btn" type="button" aria-expanded="false" aria-controls="leque" aria-label="Abrir contato: WhatsApp, ligar e como chegar"><span class="abre">{% if wa %}{{ icone_wa }}{% else %}{{ icone_tel }}{% endif %}</span>{{ icone_x }}</button>
+</nav>
+
+{{ d.script() }}
+<script>
+(() => {
+  const els = document.querySelectorAll(".brota");
+  if (!("IntersectionObserver" in window)) { els.forEach((e) => e.classList.add("viva")); return; }
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) { e.target.classList.add("viva"); io.unobserve(e.target); }
+  }), { rootMargin: "0px 0px -8% 0px" });
+  els.forEach((e) => io.observe(e));
+})();
+(() => {
+  const nav = document.querySelector(".quintal-contato"), btn = nav.querySelector(".broto-btn");
+  const poe = (v) => { nav.classList.toggle("aberto", v); btn.setAttribute("aria-expanded", v); btn.setAttribute("aria-label", v ? "Fechar contato" : "Abrir contato: WhatsApp, ligar e como chegar"); };
+  btn.addEventListener("click", () => poe(!nav.classList.contains("aberto")));
+  nav.querySelectorAll(".leque a").forEach((a) => a.addEventListener("click", () => poe(false)));
+  document.addEventListener("click", (e) => { if (!nav.contains(e.target)) poe(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && nav.classList.contains("aberto")) { poe(false); btn.focus(); } });
+})();
+</script>
+{{ ef.motor() }}
+</body>
+</html>

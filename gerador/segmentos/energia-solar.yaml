@@ -1,0 +1,48 @@
+ordem: 4
+nome: Energia solar
+categorias: solar|fotovolt
+voz: Prático e otimista sem exagero. Explica o passo a passo, sem prometer economia em número.
+tom: tecnico
+secoes:
+- como funciona
+- etapas da instalação
+- orçamento
+- dúvidas
+faq:
+- Como funciona o orçamento?
+- Precisa de reforma no telhado?
+- Quanto tempo leva para instalar?
+- Fazem manutenção?
+icones:
+- sol
+- painel
+- raio
+- casa
+templates:
+- 08
+- '06'
+- '02'
+- '03'
+fontes:
+  titulo:
+  - Outfit
+  - sans-serif
+  texto:
+  - Inter
+  - sans-serif
+claro:
+  fundo: '#fbf8ee'
+  superficie: '#ffffff'
+  texto: '#1c1a10'
+  suave: '#5a5440'
+  acentos:
+  - '#9a4a00'
+  - '#1f6f3a'
+  destaque: '#ffd23f'
+escuro:
+  fundo: '#14130b'
+  superficie: '#1f1d12'
+  texto: '#f7f1dc'
+  suave: '#c9bf9c'
+  acento: '#ffc83d'
+  destaque: '#ffe08a'

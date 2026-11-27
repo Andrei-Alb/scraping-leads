@@ -1,0 +1,81 @@
+/* Catálogo de efeitos de rolagem. Cor vem de --ef-* (o tema do segmento só troca cor e fonte, nunca a estrutura).
+   Sem JS, ou com prefers-reduced-motion, tudo fica parado e legível: o movimento só liga com html.ef-vivo. */
+.ef-wrap{max-width:76rem;margin-inline:auto;padding-inline:clamp(1.25rem,5vw,3rem)}
+.ef-sec{padding-block:clamp(3.5rem,9vw,7rem);color:var(--ef-tinta)}
+.ef-sec h2{font-size:clamp(2rem,6.5vw,3.75rem);line-height:1.05;margin:0 0 1.5rem;text-wrap:balance}
+.ef-sec h3{font-size:clamp(1.3rem,3.2vw,1.75rem);line-height:1.2;margin:0 0 .6rem}
+.ef-sec p{font-size:1.0625rem;line-height:1.6;margin:0}
+.ef-rotulo{display:block;font-size:1rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ef-acento);margin-bottom:.75rem}
+
+/* progresso: barra fina de leitura no topo */
+.ef-progresso{position:fixed;inset:0 0 auto;height:4px;z-index:60;pointer-events:none;background:var(--ef-acento);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+@supports (animation-timeline:scroll()){
+  .ef-vivo .ef-progresso{animation:ef-barra linear both;animation-timeline:scroll(root)}
+}
+@keyframes ef-barra{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* parallax: foto e formas em velocidades diferentes; o recorte segura as camadas dentro do bloco */
+.ef-parallax{position:relative;overflow:clip;height:clamp(18rem,62svh,40rem);border-radius:var(--ef-raio,0);background:var(--ef-sup)}
+.ef-parallax img{position:absolute;inset:-18% 0;width:100%;height:136%;object-fit:cover}
+.ef-parallax .ef-forma{position:absolute;border-radius:50%;background:var(--ef-acento);opacity:.85;mix-blend-mode:multiply}
+.ef-parallax .f1{width:38%;aspect-ratio:1;left:-8%;bottom:-12%}
+.ef-parallax .f2{width:18%;aspect-ratio:1;right:8%;top:10%;background:var(--ef-destaque)}
+.ef-vivo .ef-parallax [data-camada]{transform:translate3d(0,calc((var(--p,.5) - .5) * var(--camada) * 1%),0);will-change:transform}
+
+/* zoom: a foto abre do recorte para a tela cheia enquanto entra */
+.ef-zoom{margin:0;overflow:clip;border-radius:var(--ef-raio,0)}
+.ef-zoom img{display:block;width:100%;height:clamp(18rem,70svh,44rem);object-fit:cover}
+.ef-vivo .ef-zoom{clip-path:inset(calc((1 - min(var(--p,0) * 2.2,1)) * 14%) round calc(var(--ef-raio,0px) + (1 - min(var(--p,0) * 2.2,1)) * 40px))}
+.ef-vivo .ef-zoom img{transform:scale(calc(1.25 - min(var(--p,0) * 2.2,1) * .25))}
+@supports (animation-timeline:view()){
+  .ef-vivo .ef-zoom{animation:ef-abre linear both;animation-timeline:view();animation-range:entry 0% cover 45%}
+  .ef-vivo .ef-zoom img{animation:ef-aproxima linear both;animation-timeline:view();animation-range:entry 0% cover 45%}
+}
+@keyframes ef-abre{from{clip-path:inset(14% round 40px)}to{clip-path:inset(0 round var(--ef-raio,0px))}}
+@keyframes ef-aproxima{from{transform:scale(1.25)}to{transform:scale(1)}}
+
+/* revela: cada palavra acende conforme a frase atravessa a tela (JS quebra em .ef-pal com --i) */
+.ef-vivo [data-efeito="revela"] .ef-pal{opacity:calc(.18 + .82 * clamp(0,(var(--p,0) * 1.6 - .2) * var(--n) - var(--i),1));transition:opacity .15s linear}
+
+/* contagem: número fixo em largura para não empurrar o texto vizinho */
+[data-efeito="contagem"]{font-variant-numeric:tabular-nums}
+
+/* marquee: depoimentos correndo; o ritmo base é CSS e a rolagem empurra o trilho */
+.ef-marquee{overflow:clip;padding-block:clamp(3rem,8vw,5.5rem);background:var(--ef-sup);color:var(--ef-tinta)}
+.ef-marquee .ef-fila{width:max-content}
+.ef-marquee .ef-anda{display:flex;gap:1.25rem;width:max-content;padding-inline:.625rem}
+.ef-marquee blockquote{margin:0;flex:0 0 min(80vw,24rem);background:var(--ef-fundo);border-radius:var(--ef-raio,0);padding:1.5rem;border:1px solid color-mix(in srgb,var(--ef-tinta) 14%,transparent)}
+.ef-marquee blockquote p{font-size:1.0625rem;line-height:1.55}
+.ef-marquee cite{display:block;margin-top:1rem;font-style:normal;font-size:1rem;color:var(--ef-acento)}
+.ef-vivo .ef-marquee .ef-fila{transform:translate3d(calc(var(--p,0) * -35vw),0,0)}
+.ef-vivo .ef-marquee .ef-anda{animation:ef-corre 60s linear infinite}
+@keyframes ef-corre{to{transform:translate3d(-50%,0,0)}}
+
+/* horizontal: a seção fica alta, o palco gruda no topo e o trilho anda de lado com a rolagem */
+.ef-horizontal .ef-trilho{display:flex;gap:1rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 clamp(1.25rem,5vw,3rem) 1rem;list-style:none;margin:0}
+.ef-horizontal .ef-card{flex:0 0 min(78vw,22rem);scroll-snap-align:start;min-height:clamp(16rem,46svh,24rem);display:flex;flex-direction:column;justify-content:space-between;gap:1.5rem;padding:1.5rem;border-radius:var(--ef-raio,0);background:var(--ef-sup);border:1px solid color-mix(in srgb,var(--ef-tinta) 14%,transparent)}
+.ef-horizontal .ef-card .ef-n{font-size:clamp(2.5rem,8vw,4rem);line-height:1;color:var(--ef-acento);font-variant-numeric:tabular-nums}
+.ef-vivo .ef-horizontal{padding-block:0}
+.ef-vivo .ef-horizontal .ef-palco{position:sticky;top:0;height:100svh;overflow:clip;display:flex;flex-direction:column;justify-content:center}
+.ef-vivo .ef-horizontal .ef-trilho{overflow:visible;width:max-content;scroll-snap-type:none;will-change:transform}
+
+/* pilha: cartões que grudam um sobre o outro; o de baixo encolhe e apaga antes de ser coberto */
+.ef-pilha .ef-cartas{list-style:none;margin:0;padding:0;display:grid;gap:1.25rem}
+.ef-pilha .ef-carta{min-height:clamp(15rem,52svh,26rem);padding:clamp(1.5rem,4vw,2.5rem);border-radius:var(--ef-raio,0);background:var(--ef-sup);border:1px solid color-mix(in srgb,var(--ef-tinta) 14%,transparent);display:flex;flex-direction:column;justify-content:space-between;gap:2rem;box-shadow:0 -12px 32px -18px color-mix(in srgb,var(--ef-tinta) 40%,transparent)}
+.ef-pilha .ef-carta .ef-n{font-size:clamp(3rem,10vw,5.5rem);line-height:.9;color:var(--ef-acento);font-variant-numeric:tabular-nums}
+.ef-vivo .ef-pilha .ef-carta{position:sticky;top:calc(4.5rem + var(--i) * 1rem);transform:scale(calc(1 - var(--q,0) * .06));transform-origin:50% 0}
+.ef-vivo .ef-pilha .ef-carta>*{opacity:calc(1 - var(--q,0) * 1.25)}
+
+/* cor: a faixa troca de fundo e tinta enquanto passa pelo meio da tela */
+.ef-cor{background:var(--ef-fundo);color:var(--ef-tinta);transition:background-color .5s,color .5s}
+.ef-cor.ef-virou{background:var(--ef-acento);color:var(--ef-fundo)}
+.ef-cor.ef-virou .ef-rotulo{color:inherit}
+.ef-cor .ef-frase{font-size:clamp(1.9rem,6vw,4rem);line-height:1.1;max-width:22ch;text-wrap:balance}
+
+/* magnético: o botão vai um pouco atrás do ponteiro, com sombra que dá profundidade */
+.ef-vivo [data-efeito="magnetico"]{transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;transform:translate3d(var(--mx,0),var(--my,0),0)}
+@media (hover:hover){.ef-vivo [data-efeito="magnetico"]:hover{box-shadow:0 14px 30px -12px color-mix(in srgb,var(--ef-tinta) 55%,transparent)}}
+
+@media (min-width:900px){
+  .ef-pilha .ef-carta{min-height:22rem}
+}

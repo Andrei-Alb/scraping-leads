@@ -1,0 +1,419 @@
+{% import "_dados.html.j2" as d with context %}{% import "efeitos/_blocos.html.j2" as ef with context %}
+{%- set geo = d.mapa_src -%}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+{{ d.head("#e9f0fa") }}
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Martian+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gelo:#e9f0fa; --gelo2:#dbe5f4; --tile:#ffffff; --tinta:#131735; --suave:#4a5378;
+  --indigo:#3a35b8; --indigo-esc:#24207f; --lima:#c8f25a; --lima-esc:#9fcf2a; --linha:#cdd9ec;
+  --r:22px; --gap:12px;
+  --sans:"Sora",system-ui,sans-serif; --mono:"Martian Mono",ui-monospace,monospace;
+  --mola:cubic-bezier(.22,1.2,.36,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--gelo);color:var(--tinta);font:400 17px/1.55 var(--sans);overflow-x:clip;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+a{color:inherit}
+h1,h2,h3{font-weight:700;letter-spacing:-.02em;line-height:1.08;margin:0;overflow-wrap:normal;hyphens:none;text-wrap:balance}
+p{margin:0}
+.num,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.wrap{max-width:1200px;margin:0 auto;padding:0 14px}
+svg.i{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* grade bento */
+.grade{display:grid;gap:var(--gap);grid-template-columns:1fr}
+.t{background:var(--tile);border-radius:var(--r);padding:22px;position:relative;overflow:hidden;
+  box-shadow:0 1px 0 var(--linha),0 10px 24px -18px rgba(36,32,127,.35)}
+.t.ind{background:var(--indigo);color:#fff}
+.t.lim{background:var(--lima);color:var(--tinta)}
+.t.esc{background:var(--tinta);color:#fff}
+.rot{font:700 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--suave);display:flex;gap:8px;align-items:center}
+.t.ind .rot,.t.esc .rot{color:#c9cdf5}
+.t.lim .rot{color:#2c3a07}
+
+/* entrada em cascata + toque */
+.js .t{opacity:0;transform:scale(.93) translateY(14px);transition:opacity .5s ease,transform .7s var(--mola);transition-delay:calc(var(--k,0) * 70ms)}
+.js .t.on{opacity:1;transform:none}
+.t.toque{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.js .t.on.toque{transition:transform .18s ease-out,box-shadow .2s}
+.t.toque:active{transform:scale(.97)!important}
+@media (hover:hover){.t.toque:hover{box-shadow:0 1px 0 var(--linha),0 18px 34px -18px rgba(36,32,127,.55)}}
+
+/* botões */
+.bt{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 20px;border-radius:14px;
+  font:600 17px/1 var(--sans);text-decoration:none;border:0;cursor:pointer;transition:transform .15s ease-out,background .2s}
+.bt:active{transform:scale(.96)}
+.bt.l{background:var(--lima);color:var(--tinta)}
+.bt.l:hover{background:#d6f77e}
+.bt.b{background:#fff;color:var(--indigo-esc)}
+.bt.o{background:var(--gelo);color:var(--indigo-esc)}
+.bt.o:hover{background:var(--gelo2)}
+:focus-visible{outline:3px solid var(--indigo);outline-offset:3px}
+.t.ind :focus-visible,.t.esc :focus-visible{outline-color:var(--lima)}
+
+/* topo */
+.topo{display:flex;justify-content:space-between;align-items:center;padding:16px 0 12px;gap:12px}
+.marca{font-weight:700;font-size:17px;display:flex;align-items:center;gap:10px;min-width:0}
+.marca b{width:14px;height:14px;border-radius:4px;background:var(--indigo);box-shadow:8px 8px 0 var(--lima);flex:none;margin-right:8px}
+.marca span{line-height:1.25}
+.topo a.bt{display:none}
+
+/* hero */
+.hero h1{font-size:clamp(30px,8.2vw,60px)}
+.hero .sub{margin-top:14px;font-size:18px;color:#dfe1fb;max-width:52ch}
+.hero .onde{margin-top:22px;display:flex;gap:8px;align-items:center;font-size:16px;color:#dfe1fb}
+.hero .onde svg{color:var(--lima)}
+.hero .acoes{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.hero .deco{position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:40px;background:rgba(255,255,255,.07);transform:rotate(18deg)}
+.nota .grande{font:700 64px/1 var(--mono);letter-spacing:-.04em;margin-top:14px}
+.nota .placar{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:14px}
+.nota .placar i{height:14px;border-radius:4px;background:linear-gradient(90deg,var(--indigo) var(--f),var(--gelo2) var(--f))}
+.nota p.q{margin-top:8px;color:var(--suave)}
+.nota a{display:inline-flex;align-items:center;min-height:52px;font-weight:600;color:var(--indigo-esc)}
+.agora{font-size:20px;font-weight:700;margin-top:14px;display:flex;gap:10px;align-items:center;line-height:1.25}
+.agora::before{content:"";width:12px;height:12px;border-radius:50%;background:#8a93b8;flex:none}
+.agora[data-aberto="1"]::before{background:var(--lima-esc);box-shadow:0 0 0 0 rgba(159,207,42,.6);animation:pulso 2s infinite}
+@keyframes pulso{70%{box-shadow:0 0 0 10px rgba(159,207,42,0)}100%{box-shadow:0 0 0 0 rgba(159,207,42,0)}}
+.dias{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:2px}
+.dias li{display:flex;justify-content:space-between;gap:12px;font-size:16px;padding:4px 8px;border-radius:8px;color:var(--suave)}
+.dias li span:last-child{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;text-align:right}
+.dias li[data-hoje]{background:var(--gelo);color:var(--tinta);font-weight:600}
+.mini{display:flex;flex-direction:column;justify-content:space-between;min-height:200px;text-decoration:none;
+  background:var(--gelo2) radial-gradient(circle at 1px 1px,#b9c8e2 1px,transparent 1.5px) 0 0/16px 16px}
+.mini .pino{position:absolute;left:58%;top:42%;width:44px;height:44px;border-radius:50% 50% 50% 0;background:var(--indigo);transform:rotate(-45deg);
+  box-shadow:0 0 0 8px rgba(58,53,184,.15)}
+.mini .pino::after{content:"";position:absolute;inset:14px;border-radius:50%;background:var(--lima)}
+.mini .via{position:absolute;left:-10%;right:-10%;top:58%;height:14px;background:#fff;transform:rotate(-8deg)}
+.mini .via2{position:absolute;top:-10%;bottom:-10%;left:30%;width:12px;background:#fff;transform:rotate(12deg)}
+.mini .rot,.mini .end{position:relative}
+.mini .end{font-weight:600;background:rgba(255,255,255,.9);border-radius:12px;padding:10px 12px;align-self:flex-start;max-width:100%}
+.contato .acoes{display:grid;gap:8px;margin-top:14px}
+
+/* seções */
+section{padding:56px 0 0}
+.cab{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.cab h2{font-size:clamp(28px,6.4vw,46px);max-width:20ch}
+.cab .rot{color:var(--indigo)}
+.serv h3{font-size:22px}
+.serv p{margin-top:10px;color:var(--suave)}
+.serv .t.ind p{color:#dfe1fb}
+.serv .n{font:700 14px/1 var(--mono);color:var(--indigo);margin-bottom:28px;display:block}
+.serv .t.ind .n{color:var(--lima)}
+.dif .t{display:flex;flex-direction:column;gap:10px}
+.dif h3{display:flex;gap:10px;align-items:baseline}
+.dif h3 .i{color:var(--indigo);transform:translateY(3px)}
+.dif .t.esc h3 .i{color:var(--lima)}
+.dif h3{font-size:21px}
+.dif p{color:var(--suave)}
+.dif .t.esc p{color:#c7cbe6}
+.passos{counter-reset:p}
+.passos .t{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-items:start}
+.passos .k{grid-row:span 2;font:700 40px/1 var(--mono);color:var(--indigo);width:64px;height:64px;border-radius:16px;background:var(--gelo);display:grid;place-items:center}
+.passos h3{font-size:21px;padding-top:6px}
+.passos p{color:var(--suave)}
+.mapa{padding:0;min-height:300px;border:6px solid var(--tile)}
+.mapa iframe{position:absolute;inset:0;width:100%;height:100%;border:0;filter:saturate(.7) hue-rotate(8deg)}
+.mapa .legenda{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:var(--tinta);color:#fff;font:700 13px/1 var(--mono);letter-spacing:.04em}
+.mapa .legenda svg{color:var(--lima);width:18px;height:18px}
+.mapa .abrir{position:absolute;right:10px;bottom:10px}
+.rotas{display:grid;gap:8px;margin-top:16px;grid-template-columns:1fr 1fr}
+.rota{display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:96px;padding:14px;border-radius:16px;background:var(--gelo);color:var(--indigo-esc);
+  text-decoration:none;font:600 16px/1.2 var(--sans);border:0;cursor:pointer;text-align:left;transition:transform .15s ease-out,background .2s}
+.rota:hover{background:var(--gelo2)}
+.rota:active{transform:scale(.96)}
+.rota.g{grid-column:1/-1;background:var(--lima);color:var(--tinta);flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;min-height:64px}
+.rota.c{grid-column:1/-1;background:var(--tinta);color:#fff;flex-direction:row;align-items:center;justify-content:flex-start;gap:12px;min-height:56px}
+.endereco{font-size:20px;font-weight:600;margin-top:12px}
+.faq .grade{counter-reset:q}
+.faq .t{padding:0;transition:background .3s,color .3s}
+.faq details[open]{background:var(--indigo);color:#fff}
+details summary{list-style:none;cursor:pointer;min-height:72px;padding:16px 18px;font-weight:600;font-size:18px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;line-height:1.3}
+details summary::-webkit-details-marker{display:none}
+.faq .qn{font:700 14px/1 var(--mono);width:44px;height:44px;border-radius:12px;background:var(--gelo);color:var(--indigo);display:grid;place-items:center}
+.faq .qx{width:22px;height:22px;border-radius:6px;border:2.5px solid var(--indigo);transition:transform .35s var(--mola),background .2s}
+.faq details[open] .qn{background:var(--lima);color:var(--tinta)}
+.faq details[open] .qx{background:var(--lima);border-color:var(--lima);transform:rotate(45deg) scale(.8)}
+details p{padding:0 18px 22px 76px;color:var(--suave)}
+.faq details[open] p{color:#dfe1fb}
+.final{padding:34px 22px}
+.final h2{font-size:clamp(30px,7vw,54px);max-width:18ch}
+.final p{margin-top:12px;font-size:18px;max-width:50ch}
+.final .acoes{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.final .bt.esc{background:var(--tinta);color:#fff}
+footer{padding:40px 0 30px}
+footer .grade{grid-template-columns:1fr 1fr}
+footer .t{padding:18px;font-size:16px}
+footer .nome{grid-column:1/-1;background:var(--tinta);color:#fff}
+footer .nome strong{display:block;font-size:20px;line-height:1.25}
+footer .nome span{display:block;margin-top:6px;color:#c7cbe6}
+footer a.t{display:flex;flex-direction:column;justify-content:space-between;gap:16px;min-height:96px;text-decoration:none;font-weight:600;color:var(--indigo-esc)}
+footer a.t svg{color:var(--indigo)}
+footer a.t:last-child{grid-column:1/-1;flex-direction:row;align-items:center;min-height:56px}
+
+/* contato flutuante: pílula de 2 blocos + bolinha anexa */
+.pilula{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));z-index:9;transform:translateX(-50%);display:flex;align-items:center;gap:8px}
+.pilula .par{display:flex;gap:4px;padding:5px;border-radius:999px;background:var(--tinta);box-shadow:0 14px 30px -12px rgba(19,23,53,.6)}
+.pilula .par a{display:flex;align-items:center;gap:8px;min-height:52px;padding:0 18px;border-radius:999px;color:#fff;text-decoration:none;font-weight:600;font-size:16px;white-space:nowrap}
+.pilula .par a.wa{background:var(--lima);color:var(--tinta)}
+.pilula .bola{width:62px;height:62px;border-radius:50%;background:var(--indigo);color:#fff;text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  font:700 11px/1 var(--mono);box-shadow:0 0 0 4px var(--gelo),0 14px 30px -12px rgba(36,32,127,.7)}
+.pilula .bola svg{width:20px;height:20px;color:var(--lima)}
+.pilula a:active{transform:scale(.94)}
+.js .pilula{animation:pilula .6s var(--mola) .4s both}
+@keyframes pilula{from{opacity:0;transform:translate(-50%,24px) scale(.9)}}
+
+@media (min-width:700px){
+  .wrap{padding:0 24px}
+  .grade{grid-template-columns:repeat(2,1fr)}
+  .hero .t.titulo,.span2{grid-column:1/-1}
+  .chegar .grade{grid-template-columns:1fr}
+}
+@media (min-width:1100px){
+  body{padding-bottom:0}
+  .pilula{display:none}
+  footer .grade{grid-template-columns:2fr 1fr 1fr 1fr}
+  footer .nome,footer a.t:last-child{grid-column:auto}
+  footer a.t:last-child{flex-direction:column;align-items:flex-start;min-height:96px}
+  .topo a.bt{display:inline-flex}
+  :root{--gap:14px}
+  .t{padding:28px}
+  .hero .grade{grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(150px,auto)}
+  .hero .t.titulo{grid-column:1/4;grid-row:span 2;display:flex;flex-direction:column;justify-content:flex-end;padding:40px}
+  .hero .t.horario{grid-row:span 2}
+  .hero .contato{grid-column:span 2}
+  .hero .mini{grid-column:span 1}
+  .serv .grade{grid-template-columns:repeat(6,1fr)}
+  .serv .t{grid-column:span 3}
+  .serv .t:first-child{grid-row:span 2;display:flex;flex-direction:column;justify-content:flex-end}
+  .serv .t:first-child h3{font-size:30px}
+  .serv .t:nth-child(n+4){grid-column:span 2}
+  .dif .grade{grid-template-columns:repeat(4,1fr)}
+  .dif .t:nth-child(3n+1){grid-column:span 2}
+  .passos .grade{grid-template-columns:repeat(3,1fr)}
+  .passos .t{grid-template-columns:1fr}
+  .passos .k{grid-row:auto;margin-bottom:24px}
+  .chegar .grade{grid-template-columns:2fr 1fr}
+  .chegar .mapa{grid-row:span 2;min-height:440px}
+  .faq .grade{grid-template-columns:1fr 1fr;align-items:start}
+  .final{padding:56px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .js .t,.js .t.on{opacity:1;transform:none;transition:none}
+  .agora[data-aberto="1"]::before{animation:none}
+  .bt:active,.t.toque:active,.pilula a:active,.rota:active{transform:none!important}
+  .js .pilula{animation:none}
+  .faq .qx,.faq .t{transition:none}
+}
+</style>
+<script>document.documentElement.classList.add("js")</script>
+{{ ef.estilo() }}
+</head>
+<body>
+{{ ef.progresso() }}
+{%- macro ic(n) -%}
+<svg class="i" viewBox="0 0 24 24" aria-hidden="true">
+{%- if n == "tel" -%}<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>
+{%- elif n == "wa" -%}<path d="M3 21l1.7-5A9 9 0 1 1 8 19.3z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2-2l.8-1-1-2z"/>
+{%- elif n == "pin" -%}<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>
+{%- elif n == "copiar" -%}<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>
+{%- elif n == "contato" -%}<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>
+{%- elif n == "estrela" -%}<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>
+{%- elif n == "seta" -%}<path d="M5 12h14M13 6l6 6-6 6"/>
+{%- elif n == "topo" -%}<path d="M12 19V5M6 11l6-6 6 6"/>
+{%- elif n == "carro" -%}<path d="M5 16V11l2-5h10l2 5v5M3 16h18v3H3zM7 19v1M17 19v1M5 11h14"/>
+{%- elif n == "maca" -%}<path d="M12 7c-4-2-8 0-8 5s3 9 5 9c1 0 2-.5 3-.5s2 .5 3 .5c2 0 5-4 5-9s-4-7-8-5zM12 7c0-2 1-4 3-4"/>
+{%- else -%}<path d="M5 12l4 4 10-10"/>
+{%- endif -%}
+</svg>
+{%- endmacro -%}
+
+<div class="wrap">
+  <header class="topo" id="topo">
+    <div class="marca"><b aria-hidden="true"></b><span>{{ c.nome_exibicao }}</span></div>
+    <a class="bt l" href="{{ d.wa_link }}">{{ ic("wa") }}{{ c.cta }}</a>
+  </header>
+
+  <main>
+  <section class="hero" style="padding-top:4px" aria-label="Apresentação">
+    <div class="grade">
+      <div class="t ind titulo">
+        <span class="deco" aria-hidden="true"></span>
+        <h1>{{ c.headline }}</h1>
+        <p class="sub">{{ c.subtitulo }}</p>
+        <p class="onde">{{ ic("pin") }}{{ lead.categoria }}{% if lead.bairro %} · {{ lead.bairro }}{% endif %}</p>
+        <div class="acoes">
+          <a class="bt l" href="{{ d.wa_link }}">{{ ic("wa") }}{{ c.cta }}</a>
+          <a class="bt b" href="{{ d.tel_link }}">{{ ic("tel") }}Ligar</a>
+        </div>
+      </div>
+
+      {% if nota %}
+      <div class="t nota">
+        <div class="rot">Nota no Google</div>
+        <p class="grande num">{{ ef.conta(nota) }}</p>
+        <div class="placar" aria-hidden="true">{% for i in range(5) %}<i style="--f:{{ ([[(lead.nota|float - i) * 100, 0] | max, 100] | min) | round | int }}%"></i>{% endfor %}</div>
+        <p class="q"><span class="num">{{ ef.conta(lead.avaliacoes) }}</span> avaliações</p>
+        <a href="{{ d.avaliar }}" target="_blank" rel="noopener">Avaliar no Google</a>
+      </div>
+      {% endif %}
+
+      {% if horario %}
+      <div class="t horario" data-horario='{{ horario | tojson }}'>
+        <div class="rot">Horário</div>
+        <p class="agora" data-agora>Confira o horário</p>
+        <ul class="dias">{% for h in horario %}<li data-dia="{{ loop.index0 }}"><span>{{ h.dia }}</span><span>{{ h.texto }}</span></li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+
+      <div class="t lim contato">
+        <div class="rot">Fale agora</div>
+        <p class="num" style="font-size:24px;font-weight:700;margin-top:12px">{{ lead.telefone }}</p>
+        <div class="acoes">
+          {% if wa %}<a class="bt esc" style="background:var(--tinta);color:#fff" href="{{ d.wa_link }}">{{ ic("wa") }}WhatsApp</a>{% endif %}
+          <a class="bt b" href="{{ d.tel_link }}">{{ ic("tel") }}Ligar</a>
+          {% if vcf %}<a class="bt b" href="{{ vcf }}" download="contato.vcf">{{ ic("contato") }}Salvar contato</a>{% endif %}
+        </div>
+      </div>
+
+      {% if geo %}
+      <a class="t mini toque" href="#chegar">
+        <span class="via" aria-hidden="true"></span><span class="via2" aria-hidden="true"></span><span class="pino" aria-hidden="true"></span>
+        <span class="rot">{{ ic("pin") }}Como chegar</span>
+        <span class="end">{{ lead.bairro or "Ver no mapa" }} →</span>
+      </a>
+      {% endif %}
+    </div>
+  </section>
+  {% if "zoom" in efeitos %}<div style="padding-block:1rem">{{ ef.zoom() }}</div>{% endif %}
+
+  {% if "horizontal" in efeitos %}{{ ef.horizontal(c.servicos, "O que fazemos por você", "Serviços", "servicos") }}{% else %}
+  <section class="serv" id="servicos">
+    <div class="cab"><div class="rot">Serviços</div><h2>O que fazemos por você</h2></div>
+    <div class="grade">
+      {% for s in c.servicos %}
+      <article class="t{% if loop.index0 % 5 == 0 %} ind{% endif %}">
+        <span class="n" aria-hidden="true">{{ "%02d" | format(loop.index) }}</span>
+        <h3>{{ s.titulo }}</h3>
+        <p>{{ s.descricao }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="dif">
+    <div class="cab"><div class="rot">Por que nós</div><h2>Diferenciais</h2></div>
+    <div class="grade">
+      {% for x in c.diferenciais %}
+      <article class="t{% if loop.index0 % 3 == 0 %} esc{% endif %}">
+        <h3>{{ ic("ok") }}{{ x.titulo }}</h3>
+        <p>{{ x.descricao }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="passos">
+    <div class="cab"><div class="rot">Como funciona</div><h2>Em poucos passos</h2></div>
+    <ol class="grade" style="list-style:none;padding:0;margin:0">
+      {% for p in c.passos %}
+      <li class="t">
+        <span class="k" aria-hidden="true">{{ loop.index }}</span>
+        <h3>{{ p.titulo }}</h3>
+        <p>{{ p.descricao }}</p>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  {% if geo %}
+  <section class="chegar" id="chegar">
+    <div class="cab"><div class="rot">Endereço</div><h2>Como chegar</h2></div>
+    <div class="grade">
+      <div class="t mapa">
+        <iframe src="{{ d.mapa_src }}" loading="lazy" title="Mapa com a localização de {{ c.nome_exibicao }}" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <span class="legenda">{{ ic("pin") }}{{ lead.bairro or "Santarém" }}</span>
+        <a class="bt l abrir" href="{{ d.rota_google }}" target="_blank" rel="noopener">{{ ic("seta") }}Abrir rota</a>
+      </div>
+      <div class="t">
+        <div class="rot">{{ ic("pin") }}Estamos em</div>
+        {% if lead.endereco %}<p class="endereco">{{ lead.endereco }}</p>{% endif %}
+        <div class="rotas">
+          <a class="rota g" href="{{ d.rota_google }}" target="_blank" rel="noopener">{{ ic("pin") }}Rota no Google Maps</a>
+          <a class="rota" href="{{ d.rota_waze }}" target="_blank" rel="noopener">{{ ic("carro") }}Waze</a>
+          <a class="rota" href="{{ d.rota_apple }}" target="_blank" rel="noopener">{{ ic("maca") }}Apple Mapas</a>
+          {% if lead.endereco %}<button class="rota c" type="button" data-copiar="{{ lead.endereco }}">{{ ic("copiar") }}<span data-copiar-rotulo>Copiar endereço</span></button>{% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+  {% elif lead.endereco %}
+  <section class="chegar">
+    <div class="grade"><div class="t span2">
+      <div class="rot">{{ ic("pin") }}Endereço</div><p class="endereco">{{ lead.endereco }}</p>
+      <div class="rotas"><button class="rota c" type="button" data-copiar="{{ lead.endereco }}">{{ ic("copiar") }}<span data-copiar-rotulo>Copiar endereço</span></button></div>
+    </div></div>
+  </section>
+  {% endif %}
+
+  {% if c.faq %}
+  <section class="faq">
+    <div class="cab"><div class="rot">Dúvidas</div><h2>Perguntas frequentes</h2></div>
+    <div class="grade">
+      {% for f in c.faq %}
+      <details class="t"><summary><span class="qn num" aria-hidden="true">{{ "%02d" | format(loop.index) }}</span><span>{{ f.pergunta }}</span><span class="qx" aria-hidden="true"></span></summary><p>{{ f.resposta }}</p></details>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section>
+    <div class="t lim final">
+      <h2>{{ c.cta_final_titulo }}</h2>
+      <p>{{ c.cta_final_texto }}</p>
+      <div class="acoes">
+        <a class="bt esc" href="{{ d.wa_link }}">{{ ic("wa") }}{{ c.cta }}</a>
+        <a class="bt b" href="{{ d.tel_link }}">{{ ic("tel") }}Ligar</a>
+      </div>
+    </div>
+  </section>
+  </main>
+
+  <footer>
+    <div class="grade">
+      <div class="t esc nome"><strong>{{ lead.nome }}</strong><span>{{ lead.categoria }}</span>{% if lead.telefone %}<span class="num">{{ lead.telefone }}</span>{% endif %}</div>
+      <a class="t" href="{{ d.avaliar }}" target="_blank" rel="noopener">{{ ic("estrela") }}Avaliar no Google</a>
+      {% if vcf %}<a class="t" href="{{ vcf }}" download="contato.vcf">{{ ic("contato") }}Salvar contato</a>{% endif %}
+      <a class="t" href="#topo">{{ ic("topo") }}Voltar ao topo</a>
+    </div>
+  </footer>
+</div>
+
+<nav class="pilula barra-fixa" aria-label="Contato rápido">
+  <div class="par">
+    {% if wa %}<a class="wa" href="{{ d.wa_link }}">{{ ic("wa") }}WhatsApp</a>{% endif %}
+    <a href="{{ d.tel_link }}">{{ ic("tel") }}Ligar</a>
+  </div>
+  {% if geo %}<a class="bola" href="#chegar">{{ ic("pin") }}Rota</a>{% endif %}
+</nav>
+
+{{ d.script() }}
+<script>
+(() => {
+  // hífen sem quebra (U+2011): "ar-condicionado" não parte no fim da linha
+  const tw = document.createTreeWalker(document.querySelector("main"), NodeFilter.SHOW_TEXT);
+  for (let n; (n = tw.nextNode());) if (/\p{L}-\p{L}/u.test(n.data)) n.data = n.data.replace(/(\p{L})-(?=\p{L})/gu, "$1\u2011");
+  // cascata: cada grade numera os próprios blocos; entram ao aparecer na tela
+  document.querySelectorAll(".grade, .final").forEach((g) => [...g.children].forEach((t, k) => t.style.setProperty("--k", k)));
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("on"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll(".t").forEach((t) => io.observe(t));
+})();
+</script>
+{{ ef.motor() }}
+</body>
+</html>

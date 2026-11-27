@@ -1,0 +1,48 @@
+ordem: 11
+nome: Comércio
+categorias: loja|supermerc|mercado|papelar|móve|calçad|moda|distribuid|boutique|armarinho|utilidade
+voz: Simpático e prático. Fala do que tem na loja e de como pedir ou separar.
+tom: tecnico
+secoes:
+- o que você encontra
+- como comprar
+- entrega
+- dúvidas
+faq:
+- Fazem entrega?
+- Dá para separar pelo WhatsApp?
+- Quais formas de pagamento?
+- Qual o horário?
+icones:
+- sacola
+- etiqueta
+- moto
+- cartao
+templates:
+- 08
+- '06'
+- '05'
+- '02'
+fontes:
+  titulo:
+  - Rubik
+  - sans-serif
+  texto:
+  - Work Sans
+  - sans-serif
+claro:
+  fundo: '#f7f5f2'
+  superficie: '#ffffff'
+  texto: '#1c1a17'
+  suave: '#55504a'
+  acentos:
+  - '#c2410c'
+  - '#6d28d9'
+  destaque: '#fdba74'
+escuro:
+  fundo: '#141210'
+  superficie: '#1f1c18'
+  texto: '#f6f1ea'
+  suave: '#bdb4a8'
+  acento: '#ff9a52'
+  destaque: '#ffc999'

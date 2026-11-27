@@ -1,0 +1,48 @@
+ordem: 5
+nome: Construção
+categorias: constru|engenh|arquitet|empreiteir|marcen|vidraç|serralher|pedreir|tintas|elétric|hidráulic
+voz: Firme e objetivo. Fala de material, prazo e entrega, sem enfeite.
+tom: tecnico
+secoes:
+- o que fazemos
+- como pedir orçamento
+- entrega
+- dúvidas
+faq:
+- Fazem entrega na obra?
+- Como peço orçamento?
+- Atendem qual região?
+- Aceitam pedido pelo WhatsApp?
+icones:
+- tijolo
+- capacete
+- caminhao
+- regua
+templates:
+- '02'
+- 08
+- '04'
+- '01'
+fontes:
+  titulo:
+  - Oswald
+  - sans-serif
+  texto:
+  - Barlow
+  - sans-serif
+claro:
+  fundo: '#f5efe6'
+  superficie: '#fffaf3'
+  texto: '#231a12'
+  suave: '#5c4a3a'
+  acentos:
+  - '#a3410f'
+  - '#7a5a12'
+  destaque: '#f2b23a'
+escuro:
+  fundo: '#17110c'
+  superficie: '#221a12'
+  texto: '#f5ebdd'
+  suave: '#c9b49c'
+  acento: '#f08a4b'
+  destaque: '#f6c66a'

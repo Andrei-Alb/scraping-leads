@@ -1,0 +1,48 @@
+ordem: 12
+nome: Tecnologia e assistência
+categorias: informátic|celular|eletrônic|gráfica|computador|impress|internet|provedor
+voz: Objetivo e moderno. Fala de diagnóstico, prazo e de resolver sem enrolação.
+tom: tecnico
+secoes:
+- serviços
+- como funciona o reparo
+- prazo
+- dúvidas
+faq:
+- Fazem orçamento sem compromisso?
+- Quanto tempo leva o conserto?
+- Têm garantia?
+- Atendem em casa?
+icones:
+- chip
+- celular
+- ferramenta
+- relogio
+templates:
+- '06'
+- '03'
+- 08
+- '07'
+fontes:
+  titulo:
+  - Space Grotesk
+  - sans-serif
+  texto:
+  - IBM Plex Sans
+  - sans-serif
+claro:
+  fundo: '#f2f3f8'
+  superficie: '#ffffff'
+  texto: '#11132a'
+  suave: '#474b66'
+  acentos:
+  - '#4338ca'
+  - '#0f6e8c'
+  destaque: '#b6f09c'
+escuro:
+  fundo: '#0b0c18'
+  superficie: '#141628'
+  texto: '#eceefb'
+  suave: '#a9adcb'
+  acento: '#8b93ff'
+  destaque: '#b6f09c'

@@ -1,0 +1,48 @@
+ordem: 13
+nome: Pet
+categorias: pet|veterin|banho e tosa|agropecu|ração
+voz: Carinhoso e confiável. Fala com o tutor, do bem-estar do bicho e do cuidado no atendimento.
+tom: clinica
+secoes:
+- serviços
+- como agendar
+- cuidados
+- dúvidas
+faq:
+- Precisa agendar banho e tosa?
+- Buscam o pet em casa?
+- Atendem emergência?
+- Quais vacinas aplicam?
+icones:
+- pata
+- coracao
+- calendario
+- casa
+templates:
+- '05'
+- '06'
+- 08
+- '07'
+fontes:
+  titulo:
+  - Fredoka
+  - sans-serif
+  texto:
+  - Nunito
+  - sans-serif
+claro:
+  fundo: '#f6f8ee'
+  superficie: '#ffffff'
+  texto: '#1d2512'
+  suave: '#4e5a3f'
+  acentos:
+  - '#3f6b12'
+  - '#a23d1b'
+  destaque: '#ffd166'
+escuro:
+  fundo: '#11160b'
+  superficie: '#1a2112'
+  texto: '#eef3e2'
+  suave: '#b7c2a3'
+  acento: '#a5d86a'
+  destaque: '#ffd98a'

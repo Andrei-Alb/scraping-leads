@@ -1,0 +1,48 @@
+ordem: 2
+nome: Saúde
+categorias: clínica|médic|fisio|psicólog|nutri|laborat|saúde|hospital|farmác|drogaria|ótica|fonoaud|dermat|oftalm|ortop|pediat|ginec|cardio
+voz: Claro, respeitoso e seguro. Frases curtas, sem jargão médico e sem promessa de cura.
+tom: clinica
+secoes:
+- especialidades
+- como agendar
+- o que levar
+- dúvidas
+faq:
+- Como agendo uma consulta?
+- Atendem por convênio?
+- O que preciso levar?
+- Tem atendimento no sábado?
+icones:
+- estetoscopio
+- calendario
+- coracao
+- documento
+templates:
+- '03'
+- '06'
+- '05'
+- '01'
+fontes:
+  titulo:
+  - Manrope
+  - sans-serif
+  texto:
+  - Source Sans 3
+  - sans-serif
+claro:
+  fundo: '#f4f7fb'
+  superficie: '#ffffff'
+  texto: '#14213d'
+  suave: '#475569'
+  acentos:
+  - '#1f5fbf'
+  - '#0f766e'
+  destaque: '#bfdbfe'
+escuro:
+  fundo: '#0c1424'
+  superficie: '#131e33'
+  texto: '#eaf0fa'
+  suave: '#a8b6cc'
+  acento: '#7cb4ff'
+  destaque: '#c7ddff'

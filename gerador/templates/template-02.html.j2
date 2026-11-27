@@ -1,0 +1,357 @@
+{% import "_dados.html.j2" as d with context %}{% import "efeitos/_blocos.html.j2" as ef with context %}<!doctype html>
+<html lang="pt-BR">
+<head>
+{{ d.head("#ffd400") }}
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--am:#ffd400;--pr:#111;--br:#e4e4e0;--cz:#2b2b2b;--b:3px solid var(--pr);--s:6px 6px 0 var(--pr);
+--g:"Archivo Black","Arial Black",Impact,sans-serif;--m:"JetBrains Mono",ui-monospace,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--br);color:var(--pr);font:400 16px/1.55 var(--m);padding-bottom:0}
+a{color:inherit}
+main{overflow-x:clip}
+:focus-visible{outline:3px solid var(--pr);outline-offset:3px;box-shadow:0 0 0 6px var(--am)}
+h1,h2,h3{font-family:var(--g);font-weight:400;text-transform:uppercase;line-height:1.1;letter-spacing:-.01em;overflow-wrap:normal;hyphens:none}
+.w{max-width:1180px;margin:0 auto;padding:0 18px}
+.eti{display:inline-block;font:700 13px/1.3 var(--m);text-transform:uppercase;letter-spacing:.12em;background:var(--pr);color:var(--am);padding:6px 10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:12px 20px;border:var(--b);box-shadow:var(--s);background:var(--am);color:var(--pr);font:700 16px/1.2 var(--m);text-transform:uppercase;text-decoration:none;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--pr)}
+.btn:active{transform:translate(6px,6px);box-shadow:0 0 0 var(--pr)}
+.btn.p{background:var(--pr);color:var(--am);box-shadow:6px 6px 0 var(--cz)}
+.btn.br{background:#fff}
+.btn svg{width:22px;height:22px;flex:none}
+/* topo */
+.topo{border-bottom:var(--b);background:var(--am)}
+.topo .w{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:60px}
+.marca{font:400 18px/1.1 var(--g);text-decoration:none;min-height:48px;display:flex;align-items:center}
+.topo nav{display:none;gap:4px}
+.topo nav a{min-height:48px;display:flex;align-items:center;font:700 14px/1 var(--m);text-transform:uppercase;text-decoration:none;padding:16px 10px}
+.topo nav a:hover{background:var(--pr);color:var(--am)}
+/* hero */
+.hero{background:var(--am);border-bottom:var(--b);position:relative;overflow:clip}
+.hero .w{padding-top:36px;padding-bottom:44px;position:relative}
+.hero h1{text-transform:none;letter-spacing:-.025em;font-size:clamp(28px,8vw,104px);margin:18px 0 20px;max-width:14ch}
+.hero .sub{font-size:17px;max-width:46ch;margin-bottom:26px}
+.hero .acoes{display:flex;flex-wrap:wrap;gap:14px}
+.ficha{margin-top:34px;border:var(--b);background:var(--br);box-shadow:var(--s);display:grid}
+.ficha div{padding:12px 14px;border-bottom:var(--b)}
+.ficha div:last-child{border-bottom:0}
+.ficha dt{font-size:12px;text-transform:uppercase;letter-spacing:.12em}
+.ficha dd{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.num-bg{position:absolute;right:-.06em;bottom:-.18em;font:400 clamp(160px,46vw,520px)/1 var(--g);color:transparent;-webkit-text-stroke:3px rgba(17,17,17,.14);pointer-events:none;user-select:none}
+/* fita */
+.fita{overflow:clip;border-block:var(--b);background:repeating-linear-gradient(-45deg,var(--am) 0 22px,var(--pr) 22px 44px);padding:10px 0}
+.fita div{display:flex;width:max-content}
+.fita span{background:var(--pr);color:var(--am);font:700 15px/1 var(--m);padding:10px 18px;margin-right:24px;white-space:nowrap}
+/* seções */
+section{padding:64px 0}
+.cab{display:flex;flex-direction:column;gap:12px;margin-bottom:32px}
+.cab h2{font-size:clamp(28px,8vw,72px)}
+.escuro{background:var(--pr);color:var(--br)}
+.escuro .eti{background:var(--am);color:var(--pr)}
+.grade{display:grid;gap:22px}
+.caixa{border:var(--b);background:#fff;box-shadow:var(--s);padding:22px 20px;position:relative}
+.caixa .n{font:700 14px/1 var(--m);display:inline-block;border:var(--b);padding:6px 8px;margin-bottom:16px;font-variant-numeric:tabular-nums}
+.caixa h3{text-transform:none;font-size:clamp(20px,5.6vw,26px);margin-bottom:10px}
+.caixa:nth-child(3n+2){background:var(--am)}
+.escuro .caixa{background:var(--cz);color:var(--br);border-color:var(--am);box-shadow:6px 6px 0 var(--am)}
+.escuro .caixa .n{border-color:var(--am);color:var(--am)}
+/* passos */
+.passos{list-style:none;display:grid;gap:0;border:var(--b);box-shadow:var(--s);background:#fff}
+.passos li{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:20px;border-bottom:var(--b)}
+.passos li:last-child{border-bottom:0}
+.passos .g{font:400 48px/1 var(--g);background:var(--am);border:var(--b);width:68px;height:68px;display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.passos h3{text-transform:none;font-size:22px;margin:4px 0 6px}
+/* contato */
+.ct{display:grid;gap:22px}
+.horario ul{list-style:none;margin-top:12px}
+.horario li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--pr);font-variant-numeric:tabular-nums}
+.horario li[data-hoje]{background:var(--am);font-weight:700;padding-inline:8px;margin-inline:-8px}
+.agora{display:inline-block;font-weight:700;border:var(--b);padding:8px 10px;background:var(--br)}
+.agora[data-aberto="1"]{background:#0b7a3b;color:#fff}
+.agora[data-aberto="0"]{background:var(--pr);color:var(--am)}
+.lista-acoes{display:grid;gap:14px}
+.lista-acoes .btn{justify-content:flex-start;width:100%}
+.selo{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:14px;border:var(--b);background:var(--am);padding:14px;transform:rotate(-1.5deg);box-shadow:var(--s);margin:6px 4px 4px}
+.selo b{font:700 48px/1 var(--m);font-variant-numeric:tabular-nums;border-right:var(--b);padding-right:14px}
+.selo p{font-weight:700}
+.selo small{display:block;font-weight:400;font-size:14px;font-variant-numeric:tabular-nums}
+/* mapa: moldura de fita */
+.mapa{padding:12px;background:repeating-linear-gradient(-45deg,var(--am) 0 16px,var(--pr) 16px 32px);border:3px solid var(--am);position:relative}
+.mapa iframe{display:block;width:100%;height:300px;border:var(--b);filter:grayscale(1) contrast(1.1);background:#ccc}
+.mapa .abrir{position:absolute;right:24px;bottom:24px}
+.legenda{background:var(--am);color:var(--pr);border:var(--b);border-top:0;padding:12px 14px;font-weight:700}
+.legenda span{display:block;font-weight:400;font-size:16px}
+.rotas{list-style:none;margin-top:26px;border:3px solid var(--am);padding:6px}
+.rotas li+li{border-top:3px solid var(--am)}
+.rotas a{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:14px;min-height:60px;padding:10px 16px;text-decoration:none;font-weight:700;color:var(--br)}
+.rotas a:hover,.rotas a:focus-visible{background:var(--am);color:var(--pr)}
+.rotas svg{width:26px;height:26px}
+.rotas em{font-style:normal;font-size:13px;text-transform:uppercase;letter-spacing:.1em;border:2px solid currentColor;padding:6px 8px}
+/* faq: fichas de obra */
+.faq details{border:var(--b);background:#fff;box-shadow:var(--s);margin-bottom:18px}
+.faq summary{display:grid;grid-template-columns:auto 1fr;gap:0;cursor:pointer;list-style:none;min-height:56px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .q{font:400 22px/1 var(--g);background:var(--pr);color:var(--am);display:grid;place-items:center;padding:0 12px;min-width:64px;font-variant-numeric:tabular-nums}
+.faq summary .t{padding:14px 16px;font-weight:700;font-size:17px}
+.faq summary .t::after{content:"Abrir ficha";display:block;margin-top:8px;font-size:13px;text-transform:uppercase;letter-spacing:.1em;width:max-content;border:2px solid var(--pr);padding:4px 8px}
+.faq details[open] summary{background:var(--am);border-bottom:var(--b)}
+.faq details[open] summary .t::after{content:"Fechar ficha";background:var(--pr);color:var(--am)}
+.faq details p{padding:16px 18px 18px 82px}
+/* cta final */
+.final{background:var(--am);border-top:var(--b);text-align:left}
+.final h2{font-size:clamp(28px,8vw,88px);margin:16px 0}
+.final p{font-size:17px;max-width:50ch;margin-bottom:26px}
+/* rodapé: placa de obra */
+footer{background:var(--pr);padding:40px 0 calc(110px + env(safe-area-inset-bottom))}
+.placa{border:4px solid var(--am);background:var(--br);color:var(--pr);max-width:720px}
+.placa>strong{display:block;background:var(--am);border-bottom:4px solid var(--pr);padding:14px 16px;font:400 clamp(20px,5vw,30px)/1.05 var(--g)}
+.placa dl div{display:grid;grid-template-columns:96px 1fr;border-bottom:2px solid var(--pr)}
+.placa dl div:last-child{border-bottom:0}
+.placa dt{font-size:13px;text-transform:uppercase;letter-spacing:.1em;padding:14px 12px;border-right:2px solid var(--pr);font-weight:700}
+.placa dd{padding:12px;font-variant-numeric:tabular-nums;min-width:0}
+.placa a{white-space:nowrap;display:inline-block;padding:12px 0;line-height:24px}
+/* contato: etiquetas de obra presas no canto */
+.etiq{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:30;transform:rotate(-3deg);transform-origin:100% 100%}
+.etiq>button{display:flex;align-items:center;gap:10px;min-height:56px;padding:10px 18px;background:var(--pr);color:var(--am);border:3px solid var(--pr);box-shadow:6px 6px 0 var(--am);font:700 15px/1 var(--m);text-transform:uppercase;cursor:pointer}
+.etiq>button svg{width:22px;height:22px;transition:transform .2s}
+.etiq>button[aria-expanded="true"] svg{transform:rotate(180deg)}
+.etiq ul{list-style:none;position:absolute;right:0;bottom:calc(100% + 14px);display:grid;gap:10px;justify-items:end}
+.etiq ul[hidden]{display:none}
+.etiq li:nth-child(2){transform:rotate(4deg)}
+.etiq li:nth-child(3){transform:rotate(-2deg) translateX(-8px)}
+.etiq li a{display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 16px;white-space:nowrap;background:var(--am);color:var(--pr);border:var(--b);box-shadow:var(--s);text-decoration:none;font:700 15px/1 var(--m);text-transform:uppercase}
+.etiq li a::before{content:"";width:10px;height:10px;border-radius:50%;border:3px solid var(--pr);background:var(--br);flex:none}
+.etiq li a svg{width:22px;height:22px}
+.js .etiq ul:not([hidden]) li{animation:prega .32s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--k)*60ms)}
+@keyframes prega{from{opacity:0;translate:30px 12px;scale:1.1}}
+/* carimbo */
+.js .carimbo{opacity:0;transform:scale(1.08) rotate(-2deg)}
+.js .carimbo.ok{animation:carimba .42s cubic-bezier(.16,1,.3,1) both}
+@keyframes carimba{0%{opacity:0;transform:scale(1.08) rotate(-2deg);box-shadow:0 0 0 var(--pr)}70%{opacity:1;transform:scale(.97) rotate(.6deg)}100%{opacity:1;transform:none}}
+.nb{white-space:nowrap}
+.js .hero h1 .l{display:inline-block;white-space:nowrap;opacity:0;transform:translateY(-.6em);animation:cai .5s cubic-bezier(.16,1,.3,1) forwards;animation-delay:calc(var(--i)*70ms)}
+@keyframes cai{to{opacity:1;transform:none}}
+@media (min-width:700px){
+  .grade{grid-template-columns:repeat(2,1fr)}
+  .ficha{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .ficha div{border-bottom:0;border-right:var(--b)}
+  .ficha div:last-child{border-right:0}
+  .mapa iframe{height:400px}
+}
+@media (min-width:1024px){
+  footer{padding-bottom:120px}
+  .etiq{right:28px;bottom:28px}
+  .topo nav{display:flex}
+  .w{padding:0 32px}
+  section{padding:104px 0}
+  .hero .w{padding-top:64px;padding-bottom:80px}
+  .grade.tres{grid-template-columns:repeat(3,1fr)}
+  .cab{flex-direction:row;align-items:flex-end;justify-content:space-between}
+  .passos{grid-template-columns:repeat(3,1fr)}
+  .passos li{grid-template-columns:1fr;border-bottom:0;border-right:var(--b)}
+  .passos li:last-child{border-right:0}
+  .ct{grid-template-columns:1fr 1fr;align-items:start}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .js .carimbo,.js .carimbo.ok,.js .hero h1 .l,.js .etiq li,.etiq>button svg{transition:none!important;animation:none!important;opacity:1!important;transform:none!important}
+  .btn{transition:none}
+}
+</style>
+{{ ef.estilo() }}
+</head>
+<body>
+{{ ef.progresso() }}
+<script>document.documentElement.className="js"</script>
+{% set i_tel %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/></svg>{% endset %}
+{% set i_wa %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M3 21l1.6-4.6A9 9 0 1 1 8 19.6z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.6-2-1-1 .9a4 4 0 0 1-1.8-1.8l.9-1-1-2z"/></svg>{% endset %}
+{% set i_pin %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 22s7-7 7-12a7 7 0 0 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>{% endset %}
+{% set i_seta %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>{% endset %}
+{% set i_seta_cima %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" aria-hidden="true"><path d="M5 14l7-7 7 7"/></svg>{% endset %}
+{% set i_maca %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M4 20 12 3l8 17-8-4z"/></svg>{% endset %}
+{% set i_ok %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M4 4h16v16H4zM8 12l3 3 5-6"/></svg>{% endset %}
+
+<header class="topo">
+  <div class="w">
+    <a class="marca" href="#topo">{{ c.nome_exibicao }}</a>
+    <nav aria-label="Seções">
+      <a href="#servicos">Serviços</a><a href="#passos">Como funciona</a><a href="#contato">Contato</a>{% if c.faq %}<a href="#faq">Dúvidas</a>{% endif %}
+    </nav>
+  </div>
+</header>
+
+<main id="topo">
+<section class="hero" style="padding:0">
+  <div class="num-bg" aria-hidden="true">PA</div>
+  <div class="w">
+    <h1 data-letras>{{ c.headline }}</h1>
+    <p class="sub">{{ c.subtitulo }}</p>
+    <div class="acoes">
+      <a class="btn p"{{ ef.at("magnetico") }} href="{{ d.wa_link }}">{{ i_wa if wa else i_tel }}{{ c.cta }}</a>
+      <a class="btn br" href="{{ d.tel_link }}">{{ i_tel }}Ligar</a>
+    </div>
+    <dl class="ficha carimbo">
+      {% if lead.categoria %}<div><dt>Ramo</dt><dd>{{ lead.categoria }}</dd></div>{% endif %}
+      {% if lead.bairro %}<div><dt>Bairro</dt><dd>{{ lead.bairro }}</dd></div>{% endif %}
+      {% if nota %}<div><dt>Google</dt><dd>{{ ef.conta(nota) }} ★{% if lead.avaliacoes %} · {{ ef.conta(lead.avaliacoes) }} avaliações{% endif %}</dd></div>{% endif %}
+      <div><dt>Telefone</dt><dd>{{ lead.telefone or tel }}</dd></div>
+    </dl>
+  </div>
+</section>
+
+<div class="fita" aria-hidden="true"><div>
+{% for s in c.servicos %}<span>{{ s.titulo }}</span>{% endfor %}
+</div></div>
+
+{% if "horizontal" in efeitos %}{{ ef.horizontal(c.servicos, "O que a gente faz", "Serviços", "servicos") }}{% else %}
+<section id="servicos">
+  <div class="w">
+    <div class="cab"><span class="eti">Serviços</span><h2>O que a gente faz</h2></div>
+    <div class="grade tres">
+      {% for s in c.servicos %}
+      <article class="caixa carimbo"><span class="n">{{ "%02d" | format(loop.index) }}</span><h3>{{ s.titulo }}</h3><p>{{ s.descricao }}</p></article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{{ ef.marquee("Quem chamou, aprovou") }}
+{% if c.diferenciais %}{{ ef.cor("Por que nós", c.diferenciais[0].titulo, c.diferenciais[0].descricao) }}{% endif %}
+
+<section class="escuro">
+  <div class="w">
+    <div class="cab"><span class="eti">Por que nós</span><h2>Sem enrolação</h2></div>
+    <div class="grade">
+      {% for x in c.diferenciais %}
+      <article class="caixa carimbo"><span class="n">{{ i_ok }}</span><h3>{{ x.titulo }}</h3><p>{{ x.descricao }}</p></article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="passos">
+  <div class="w">
+    <div class="cab"><span class="eti">Como funciona</span><h2>Em {{ c.passos | length }} passos</h2></div>
+    <ol class="passos carimbo">
+      {% for p in c.passos %}
+      <li><span class="g" aria-hidden="true">{{ loop.index }}</span><div><h3>{{ p.titulo }}</h3><p>{{ p.descricao }}</p></div></li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+<section id="contato" style="padding-top:0">
+  <div class="w">
+    <div class="cab"><span class="eti">Contato</span><h2>Fale direto</h2></div>
+    <div class="ct">
+      <div class="caixa carimbo lista-acoes">
+        {% if wa %}<a class="btn p" href="{{ d.wa_link }}">{{ i_wa }}WhatsApp</a>{% endif %}
+        <a class="btn" href="{{ d.tel_link }}">{{ i_tel }}Ligar {{ lead.telefone or "" }}</a>
+        {% if vcf %}<a class="btn br" href="{{ vcf }}" download="contato.vcf">{{ i_ok }}Salvar contato</a>{% endif %}
+        {% if lead.endereco %}<button class="btn br" type="button" data-copiar="{{ lead.endereco }}">{{ i_pin }}<span data-copiar-rotulo>Copiar endereço</span></button>
+        <p>{{ lead.endereco }}</p>{% endif %}
+        <a class="btn br" href="{{ d.avaliar }}" target="_blank" rel="noopener">★ Avaliar no Google</a>
+        {% if nota %}<div class="selo"><b>{{ nota }}</b><p>Nota no Google{% if lead.avaliacoes %}<small>{{ lead.avaliacoes }} avaliações</small>{% endif %}</p></div>{% endif %}
+      </div>
+      {% if horario %}
+      <div class="caixa carimbo horario" data-horario='{{ horario | tojson }}'>
+        <h3>Horário</h3>
+        <p class="agora" data-agora>Horário de atendimento</p>
+        <ul>{% for h in horario %}<li data-dia="{{ loop.index0 }}"><span>{{ h.dia }}</span><span>{{ h.texto }}</span></li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if d.mapa_src %}
+<section id="chegar" class="escuro">
+  <div class="w">
+    <div class="cab"><span class="eti">Como chegar</span><h2>Bora pra cá</h2></div>
+    <figure class="mapa carimbo">
+      <iframe src="{{ d.mapa_src }}" loading="lazy" title="Mapa de {{ c.nome_exibicao }}"></iframe>
+      <a class="btn abrir" href="{{ d.rota_google }}" target="_blank" rel="noopener">{{ i_pin }}Abrir rota</a>
+    </figure>
+    <p class="legenda">Ponto de chegada{% if lead.endereco %}<span>{{ lead.endereco }}</span>{% endif %}</p>
+    <ul class="rotas" aria-label="Abrir rota no aplicativo">
+      <li><a href="{{ d.rota_google }}" target="_blank" rel="noopener">{{ i_pin }}Google Maps<em>Ir</em></a></li>
+      <li><a href="{{ d.rota_waze }}" target="_blank" rel="noopener">{{ i_seta }}Waze<em>Ir</em></a></li>
+      <li><a href="{{ d.rota_apple }}" target="_blank" rel="noopener">{{ i_maca }}Apple Mapas<em>Ir</em></a></li>
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+{% if c.faq %}
+<section id="faq" class="faq">
+  <div class="w">
+    <div class="cab"><span class="eti">Dúvidas</span><h2>Perguntas</h2></div>
+    {% for f in c.faq %}
+    <details><summary><span class="q" aria-hidden="true">{{ "%02d" | format(loop.index) }}</span><span class="t">{{ f.pergunta }}</span></summary><p>{{ f.resposta }}</p></details>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="final">
+  <div class="w">
+    <span class="eti">Fim da obra</span>
+    <h2>{{ c.cta_final_titulo }}</h2>
+    <p>{{ c.cta_final_texto }}</p>
+    <a class="btn p" href="{{ d.wa_link }}">{{ i_wa if wa else i_tel }}{{ c.cta }}</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="w">
+    <div class="placa">
+      <strong>{{ lead.nome }}</strong>
+      <dl>
+        {% if lead.categoria %}<div><dt>Ramo</dt><dd>{{ lead.categoria }}</dd></div>{% endif %}
+        {% if lead.endereco %}<div><dt>Local</dt><dd>{{ lead.endereco | replace("-", "‑") | replace(" ‑ ", " – ") }}</dd></div>{% endif %}
+        <div><dt>Telefone</dt><dd><a href="{{ d.tel_link }}">{{ lead.telefone or tel }}</a></dd></div>
+        {% if vcf %}<div><dt>Contato</dt><dd><a href="{{ vcf }}" download="contato.vcf">Salvar na agenda</a></dd></div>{% endif %}
+      </dl>
+    </div>
+  </div>
+</footer>
+
+<div class="etiq barra-fixa">
+  <ul id="etiq-lista" aria-label="Fale com {{ c.nome_exibicao }}" hidden>
+    {% if d.mapa_src %}<li style="--k:2"><a href="#chegar">{{ i_pin }}Como chegar</a></li>{% endif %}
+    <li style="--k:1"><a href="{{ d.tel_link }}">{{ i_tel }}Ligar</a></li>
+    {% if wa %}<li style="--k:0"><a href="{{ d.wa_link }}">{{ i_wa }}WhatsApp</a></li>{% endif %}
+  </ul>
+  <button type="button" aria-expanded="false" aria-controls="etiq-lista">{{ i_seta_cima }}Contato</button>
+</div>
+
+{{ d.script() }}
+<script>
+(() => {
+  const h = document.querySelector("[data-letras]");
+  if (h) h.innerHTML = h.textContent.trim().split(/\s+/).map((p, i) => `<span class="l" style="--i:${i}">${p.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</span>`).join(" ");
+  // Palavra com hífen (ar-condicionado) não pode quebrar no hífen.
+  const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT), alvo = [];
+  for (let n; (n = tw.nextNode());) if (/\S-\S/.test(n.textContent) && !n.parentElement.closest(".l,.nb,script")) alvo.push(n);
+  alvo.forEach((n) => { const f = document.createDocumentFragment();
+    n.textContent.split(/(\S+-\S+)/).forEach((p, i) => { if (i % 2) { const s = document.createElement("span"); s.className = "nb"; s.textContent = p; f.append(s); } else if (p) f.append(p); });
+    n.replaceWith(f); });
+  // Etiquetas de contato: abre/fecha, Esc fecha, toque fora fecha.
+  const eq = document.querySelector(".etiq"), eb = eq.querySelector("button"), el = eq.querySelector("ul");
+  const abre = (v) => { eb.setAttribute("aria-expanded", v); el.hidden = !v; };
+  eb.addEventListener("click", () => abre(el.hidden));
+  el.addEventListener("click", (e) => { if (e.target.closest("a")) abre(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !el.hidden) { abre(false); eb.focus(); } });
+  document.addEventListener("click", (e) => { if (!eq.contains(e.target)) abre(false); });
+  const els = document.querySelectorAll(".carimbo");
+  if (!("IntersectionObserver" in window)) return els.forEach((e) => e.classList.add("ok"));
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("ok"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px" });
+  els.forEach((e) => io.observe(e));
+})();
+</script>
+{{ ef.motor() }}
+</body>
+</html>

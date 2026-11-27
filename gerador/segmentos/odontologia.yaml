@@ -1,0 +1,48 @@
+ordem: 1
+nome: Odontologia
+categorias: odont|dentist|ortodont|implant
+tom: clinica
+voz: 'Calmo e acolhedor. Fala com quem tem medo de dentista: explica, tranquiliza, nunca promete resultado.'
+secoes:
+- avaliação
+- tratamentos
+- como é a primeira consulta
+- dúvidas
+faq:
+- Preciso marcar avaliação antes?
+- Atende urgência de dor de dente?
+- Quanto tempo dura a consulta?
+- Atendem crianças?
+icones:
+- dente
+- calendario
+- sorriso
+- escudo
+templates:
+- '05'
+- '03'
+- '06'
+- '01'
+fontes:
+  titulo:
+  - Fraunces
+  - serif
+  texto:
+  - Inter
+  - sans-serif
+claro:
+  fundo: '#f3f8f8'
+  superficie: '#ffffff'
+  texto: '#10292b'
+  suave: '#3f5b5d'
+  acentos:
+  - '#0b6e72'
+  - '#1d5f99'
+  destaque: '#9fe0d4'
+escuro:
+  fundo: '#0b1d1f'
+  superficie: '#12292c'
+  texto: '#e8f4f2'
+  suave: '#a9c4c1'
+  acento: '#5fd0c3'
+  destaque: '#bdeee6'

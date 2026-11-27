@@ -1,0 +1,7 @@
+# Dados de empresas e pessoas (LGPD): nunca no git.
+data/
+*.db
+*.db-*
+
+# Rascunhos locais de prompt.
+.prompt-*.md

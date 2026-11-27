@@ -1,0 +1,7 @@
+saida/
+# Capturas e vídeos mostram empresas reais (LGPD).
+estudo-templates/
+.DS_Store
+galeria/
+receitas/
+__pycache__/

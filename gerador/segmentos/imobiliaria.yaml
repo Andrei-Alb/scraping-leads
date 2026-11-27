@@ -1,0 +1,48 @@
+ordem: 16
+nome: Imóveis
+categorias: imobili|corret|imóve|condomín|incorpor
+voz: Profissional e próximo. Fala de visita, documentação e de encontrar o imóvel certo.
+tom: liberal
+secoes:
+- o que oferecemos
+- como agendar visita
+- documentação
+- dúvidas
+faq:
+- Como agendo uma visita?
+- Trabalham com aluguel?
+- Ajudam com financiamento?
+- Quais bairros atendem?
+icones:
+- casa
+- chave
+- documento
+- mapa
+templates:
+- '01'
+- '04'
+- '06'
+- '03'
+fontes:
+  titulo:
+  - DM Serif Display
+  - serif
+  texto:
+  - DM Sans
+  - sans-serif
+claro:
+  fundo: '#f5f3ef'
+  superficie: '#ffffff'
+  texto: '#1a1d21'
+  suave: '#4c525a'
+  acentos:
+  - '#24496b'
+  - '#6b3a24'
+  destaque: '#cfe0ea'
+escuro:
+  fundo: '#0f1316'
+  superficie: '#171d22'
+  texto: '#edeae4'
+  suave: '#b0ada6'
+  acento: '#9cc3dd'
+  destaque: '#d6e6f0'

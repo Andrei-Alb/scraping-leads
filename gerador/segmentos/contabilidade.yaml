@@ -1,0 +1,48 @@
+ordem: 7
+nome: Contabilidade e serviços
+categorias: contab|despachant|seguro|cartório|consultor|financ
+voz: Organizado e confiável. Explica o que o cliente ganha em tempo e tranquilidade, sem prometer número.
+tom: liberal
+secoes:
+- serviços
+- como começar
+- documentos
+- dúvidas
+faq:
+- Atendem MEI?
+- Como começo?
+- Precisa ir ao escritório?
+- Quais documentos envio?
+icones:
+- planilha
+- calculadora
+- documento
+- calendario
+templates:
+- '03'
+- '06'
+- '01'
+- '07'
+fontes:
+  titulo:
+  - IBM Plex Sans
+  - sans-serif
+  texto:
+  - IBM Plex Sans
+  - sans-serif
+claro:
+  fundo: '#f3f5f4'
+  superficie: '#ffffff'
+  texto: '#13201b'
+  suave: '#45534d'
+  acentos:
+  - '#14674a'
+  - '#28468a'
+  destaque: '#b9e3cf'
+escuro:
+  fundo: '#0c1512'
+  superficie: '#13201b'
+  texto: '#e6efea'
+  suave: '#a6b8ae'
+  acento: '#6fd3a6'
+  destaque: '#b9eed6'

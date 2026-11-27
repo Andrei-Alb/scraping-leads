@@ -1,0 +1,60 @@
+{#- Blocos de efeito. Importar com `{% import "efeitos/_blocos.html.j2" as ef with context %}`.
+    Cada macro só desenha se o efeito estiver em `efeitos` (assinatura do template ∩ dados do negócio ∩ receita).
+    O template escolhe ONDE cada bloco entra; a cor vem de --ef-*, definidas pelo tema do segmento. -#}
+
+{% macro estilo() %}<style>{% include "efeitos/efeitos.css" %}</style>{% endmacro %}
+
+{% macro motor() %}{% if efeitos %}<script>{% include "efeitos/efeitos.js" %}</script>{% endif %}{% endmacro %}
+
+{% macro progresso() %}{% if "progresso" in efeitos %}<div class="ef-progresso" data-efeito="progresso" aria-hidden="true"></div>{% endif %}{% endmacro %}
+
+{# Atributo para pôr num elemento que já existe no template (frase que revela, botão magnético). #}
+{% macro at(nome) %}{% if nome in efeitos %} data-efeito="{{ nome }}"{% endif %}{% endmacro %}
+
+{# Número real (nota, avaliações) que sobe do zero; sem o efeito, só o número. #}
+{% macro conta(v) %}{% if "contagem" in efeitos %}<span data-efeito="contagem">{{ v }}</span>{% else %}{{ v }}{% endif %}{% endmacro %}
+
+{% macro parallax(classe="") %}{% if "parallax" in efeitos %}
+<div class="ef-parallax {{ classe }}" data-efeito="parallax">
+  <img data-camada="30" style="--camada:30" src="{{ foto }}" alt="Foto de {{ c.nome_exibicao }}" referrerpolicy="no-referrer" decoding="async">
+  <span class="ef-forma f1" data-camada="-45" style="--camada:-45" aria-hidden="true"></span>
+  <span class="ef-forma f2" data-camada="-90" style="--camada:-90" aria-hidden="true"></span>
+</div>{% endif %}{% endmacro %}
+
+{% macro zoom(classe="") %}{% if "zoom" in efeitos %}
+<figure class="ef-zoom {{ classe }}" data-efeito="zoom"><img src="{{ foto }}" alt="Foto de {{ c.nome_exibicao }}" referrerpolicy="no-referrer" loading="lazy" decoding="async"></figure>{% endif %}{% endmacro %}
+
+{% macro marquee(titulo="Quem já foi atendido") %}{% if "marquee" in efeitos %}
+<section class="ef-marquee" data-efeito="marquee" aria-labelledby="ef-depo">
+  <div class="ef-wrap ef-sec" style="padding-block:0 2rem"><span class="ef-rotulo">Avaliações no Google</span><h2 id="ef-depo">{{ titulo }}</h2></div>
+  <div class="ef-fila">
+    {#- A segunda cópia fecha o laço da animação; leitor de tela lê só a primeira. -#}
+    <div class="ef-anda">
+      {% for copia in [0, 1] %}{% for d in depoimentos %}<blockquote{% if copia %} aria-hidden="true"{% endif %}><p>{{ d.texto }}</p><cite>{{ d.nome }} · {{ "★" * d.nota }}</cite></blockquote>{% endfor %}{% endfor %}
+    </div>
+  </div>
+</section>{% endif %}{% endmacro %}
+
+{% macro horizontal(itens, titulo, rotulo, id) %}
+<section class="ef-sec ef-horizontal" id="{{ id }}" data-efeito="horizontal" aria-labelledby="{{ id }}-ef">
+  <div class="ef-palco">
+    <div class="ef-wrap"><span class="ef-rotulo">{{ rotulo }}</span><h2 id="{{ id }}-ef">{{ titulo }}</h2></div>
+    <ol class="ef-trilho">{% for s in itens %}
+      <li class="ef-card"><span class="ef-n" aria-hidden="true">{{ "%02d" | format(loop.index) }}</span><div><h3>{{ s.titulo }}</h3><p>{{ s.descricao }}</p></div></li>{% endfor %}
+    </ol>
+  </div>
+</section>{% endmacro %}
+
+{% macro pilha(itens, titulo, rotulo, id) %}
+<section class="ef-sec ef-pilha" id="{{ id }}" data-efeito="pilha" aria-labelledby="{{ id }}-ef">
+  <div class="ef-wrap"><span class="ef-rotulo">{{ rotulo }}</span><h2 id="{{ id }}-ef">{{ titulo }}</h2>
+    <ol class="ef-cartas">{% for s in itens %}
+      <li class="ef-carta" style="--i:{{ loop.index0 }}"><span class="ef-n" aria-hidden="true">{{ "%02d" | format(loop.index) }}</span><div><h3>{{ s.titulo }}</h3><p>{{ s.descricao }}</p></div></li>{% endfor %}
+    </ol>
+  </div>
+</section>{% endmacro %}
+
+{% macro cor(rotulo, frase, texto="") %}{% if "cor" in efeitos %}
+<section class="ef-sec ef-cor" data-efeito="cor" aria-label="{{ rotulo }}">
+  <div class="ef-wrap"><span class="ef-rotulo">{{ rotulo }}</span><p class="ef-frase">{{ frase }}</p>{% if texto %}<p style="margin-top:1.25rem;max-width:52ch">{{ texto }}</p>{% endif %}</div>
+</section>{% endif %}{% endmacro %}

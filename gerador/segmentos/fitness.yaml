@@ -1,0 +1,48 @@
+ordem: 14
+nome: Academia e esporte
+categorias: academia|crossfit|pilates|esport|luta|natação|dança|yoga|ioga
+voz: Enérgico e motivador sem exagero. Fala de começar, de horário e de acompanhamento.
+tom: tecnico
+secoes:
+- modalidades
+- como começar
+- horários
+- dúvidas
+faq:
+- Tem aula experimental?
+- Quais os horários?
+- Precisa de avaliação física?
+- Tem plano mensal?
+icones:
+- haltere
+- relogio
+- coracao
+- calendario
+templates:
+- '02'
+- '07'
+- '06'
+- 08
+fontes:
+  titulo:
+  - Anton
+  - sans-serif
+  texto:
+  - Inter
+  - sans-serif
+claro:
+  fundo: '#f2f2f0'
+  superficie: '#ffffff'
+  texto: '#111111'
+  suave: '#4a4a4a'
+  acentos:
+  - '#c1121f'
+  - '#1d4ed8'
+  destaque: '#d4ff3a'
+escuro:
+  fundo: '#0d0d0d'
+  superficie: '#191919'
+  texto: '#f2f2f0'
+  suave: '#b3b3b3'
+  acento: '#d4ff3a'
+  destaque: '#d4ff3a'

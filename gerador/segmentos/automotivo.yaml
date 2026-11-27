@@ -1,0 +1,48 @@
+ordem: 10
+nome: Automotivo
+categorias: oficina mec|autopeç|lava|pneu|auto|moto|borrachar|funilar|retífic
+voz: Direto e de oficina. Fala de diagnóstico, prazo e preço combinado antes.
+tom: tecnico
+secoes:
+- serviços
+- como funciona
+- prazo
+- dúvidas
+faq:
+- Fazem orçamento antes?
+- Quanto tempo o carro fica?
+- Atendem moto?
+- Precisa agendar?
+icones:
+- chave
+- carro
+- relogio
+- escudo
+templates:
+- '02'
+- 08
+- '03'
+- '06'
+fontes:
+  titulo:
+  - Barlow Condensed
+  - sans-serif
+  texto:
+  - Barlow
+  - sans-serif
+claro:
+  fundo: '#f1f1ef'
+  superficie: '#ffffff'
+  texto: '#141414'
+  suave: '#4a4a48'
+  acentos:
+  - '#b3261e'
+  - '#1b4f9c'
+  destaque: '#ffcc00'
+escuro:
+  fundo: '#101010'
+  superficie: '#1b1b1b'
+  texto: '#f1f1ef'
+  suave: '#b5b5b0'
+  acento: '#ff6b5b'
+  destaque: '#ffd84d'

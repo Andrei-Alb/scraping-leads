@@ -1,0 +1,48 @@
+ordem: 15
+nome: Hospedagem e turismo
+categorias: hotel|pousada|hostel|viage|turism|passeio|resort
+voz: Convidativo e tranquilo. Fala de descanso, localização e reserva simples.
+tom: tecnico
+secoes:
+- acomodações
+- como reservar
+- localização
+- dúvidas
+faq:
+- Como faço a reserva?
+- Tem café da manhã?
+- Qual o horário de entrada?
+- Fica perto da orla?
+icones:
+- cama
+- mala
+- sol
+- mapa
+templates:
+- '04'
+- '07'
+- '01'
+- '05'
+fontes:
+  titulo:
+  - Cormorant Garamond
+  - serif
+  texto:
+  - Jost
+  - sans-serif
+claro:
+  fundo: '#f4f1ea'
+  superficie: '#ffffff'
+  texto: '#1d2420'
+  suave: '#4e5953'
+  acentos:
+  - '#0f5c5c'
+  - '#8a4b1c'
+  destaque: '#e8c98e'
+escuro:
+  fundo: '#0c1413'
+  superficie: '#14201e'
+  texto: '#efe9dc'
+  suave: '#b9b2a2'
+  acento: '#d8b16a'
+  destaque: '#ead3a3'

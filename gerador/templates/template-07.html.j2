@@ -1,0 +1,439 @@
+{% import "_dados.html.j2" as d with context %}{% import "efeitos/_blocos.html.j2" as ef with context %}
+{#- 07 · Capítulos: a página é um livro curto. Seções altas com miolo sticky; a frase acende palavra a palavra
+    conforme a pessoa rola (JS leve com rAF, sem travar toque). Petróleo + creme + coral; Newsreader + Instrument Sans. -#}
+{%- macro frase(txt) -%}{% for w in txt.split() %}<span class="w">{{ w }}</span> {% endfor %}{%- endmacro -%}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+{{ d.head("#0d2a2f") }}
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pet:#0d2a2f; --pet2:#123a40; --pet3:#1b4a51;
+  --cre:#f3ead8; --cre2:#e6dbc4; --tinta:#16302f;
+  --cor:#ff7a5c; --cor-esc:#b2412a;
+  --apagado:rgba(243,234,216,.22);
+  --sans:"Instrument Sans",system-ui,sans-serif; --serif:"Newsreader",Georgia,serif;
+  --pad:clamp(20px,5vw,64px); --barra:0px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--pet);color:var(--cre);font:400 17px/1.6 var(--sans);overflow-x:clip;padding-bottom:var(--barra)}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--cor);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:-.01em;overflow-wrap:normal;hyphens:none}
+.num{font-family:var(--sans);font-variant-numeric:tabular-nums}
+.rotulo{font:600 13px/1.2 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--cor)}
+.envolve{max-width:1180px;margin-inline:auto;padding-inline:var(--pad)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.skip{position:absolute;left:12px;top:12px;z-index:99;background:var(--cre);color:var(--tinta);padding:14px 18px;transform:translateY(-200%)}.skip:focus{transform:none}
+
+/* progresso: fio vertical na borda esquerda, fora do texto (o rótulo do capítulo mora no marcador) */
+.trilho{position:fixed;left:0;top:0;bottom:0;width:3px;z-index:40;background:rgba(243,234,216,.08);pointer-events:none}
+.trilho i{display:block;height:100%;background:var(--cor);transform-origin:50% 0;transform:scaleY(var(--lido,0))}
+
+/* prólogo */
+.prologo{min-height:100svh;display:grid;align-content:end;padding:72px var(--pad) 48px;position:relative;overflow:clip}
+.prologo__cap{position:absolute;right:calc(var(--pad) - .08em);top:64px;font:300 italic clamp(160px,42vw,520px)/.8 var(--serif);color:var(--pet3);pointer-events:none;user-select:none}
+.prologo__corpo{position:relative;max-width:1180px;width:100%;margin-inline:auto}
+.prologo h1{font-size:clamp(34px,7.4vw,92px);line-height:1.02;margin:18px 0 22px;max-width:15ch;text-wrap:balance}
+.prologo h1 em{color:var(--cor);font-style:italic}
+.prologo p.sub{font-size:clamp(17px,2vw,20px);max-width:52ch;color:var(--cre2)}
+.acoes{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 22px;border-radius:999px;font:600 16px/1 var(--sans);text-decoration:none;transition:transform .2s cubic-bezier(.2,.8,.2,1),background-color .2s}
+.btn:active{transform:scale(.97)}
+.btn svg{width:20px;height:20px;flex:none}
+.btn--cor{background:var(--cor);color:#2a0f08}
+.btn--cor:hover{background:#ff9174}
+.btn--linha{border:1px solid rgba(243,234,216,.35);color:var(--cre)}
+.btn--linha:hover{background:rgba(243,234,216,.08)}
+.meta{margin-top:30px;font-size:16px;color:var(--cre2);max-width:46ch}
+/* nota do Google como epígrafe de livro */
+.epigrafe{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:4px 18px;margin-top:34px;max-width:420px;padding-left:18px;border-left:2px solid var(--cor)}
+.epigrafe__n{font:600 clamp(40px,8vw,56px)/1 var(--sans);font-variant-numeric:tabular-nums;color:var(--cre);grid-row:span 2}
+.epigrafe__de{font:400 italic 18px/1.3 var(--serif);color:var(--cre)}
+.epigrafe__fonte{font-size:16px;color:var(--cre2)}
+.dica{display:flex;align-items:center;gap:10px;margin-top:42px;font:500 14px/1 var(--sans);color:var(--cre2)}
+.dica i{width:1px;height:38px;background:linear-gradient(var(--cor),transparent);animation:desce 2.2s ease-in-out infinite;transform-origin:top}
+@keyframes desce{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* capítulo com frase que acende */
+.cap{position:relative;height:220svh}
+.cap__palco{position:sticky;top:0;height:100svh;display:grid;align-content:center;padding:64px var(--pad) 32px}
+.cap__palco>div{max-width:1180px;width:100%;margin-inline:auto}
+.cap__titulo{display:flex;align-items:baseline;gap:14px;margin-bottom:26px}
+.cap__titulo .n{font:300 italic clamp(44px,9vw,96px)/.9 var(--serif);color:var(--cor)}
+.frase{font:400 clamp(26px,5.2vw,62px)/1.18 var(--serif);max-width:22ch;text-wrap:pretty}
+.frase .w{color:var(--apagado);transition:color .35s ease}
+.frase .w.on{color:var(--cre)}
+.frase .w.on:last-child{color:var(--cor)}
+
+/* serviços: capítulos que se empilham como páginas */
+.secao{padding:clamp(72px,12vw,140px) 0}
+.secao__cab{display:grid;gap:14px;margin-bottom:clamp(36px,6vw,64px)}
+.secao__cab h2{font-size:clamp(32px,6vw,64px);line-height:1.05;max-width:18ch;text-wrap:balance}
+.paginas{list-style:none;display:grid;gap:22px}
+.pagina{position:relative;transform:perspective(1200px) rotateX(calc((1 - var(--v,1))*14deg)) translateY(calc((1 - var(--v,1))*40px));opacity:calc(.35 + var(--v,1)*.65);background:var(--cre);color:var(--tinta);border-radius:4px 22px 22px 4px;
+  padding:clamp(26px,4vw,48px);min-height:min(62svh,460px);display:grid;grid-template-rows:auto 1fr auto;gap:22px;
+  box-shadow:-10px 0 0 -4px var(--cre2);transform-origin:50% 100%}
+.pagina__topo{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid rgba(22,48,47,.18);padding-bottom:14px}
+.pagina__topo .rotulo{color:var(--cor-esc)}
+.pagina__topo .num{font-size:14px;color:#4b5f5d}
+.pagina h3{font-size:clamp(28px,4.6vw,52px);line-height:1.06;align-self:center;max-width:16ch;text-wrap:balance}
+.pagina p{font-size:clamp(16px,1.6vw,19px);max-width:56ch;color:#304845}
+
+/* diferenciais: notas de rodapé */
+.notas{list-style:none;display:grid;gap:0;border-top:1px solid rgba(243,234,216,.16)}
+.notas li{display:grid;grid-template-columns:3ch 1fr;gap:6px 18px;padding:26px 0;border-bottom:1px solid rgba(243,234,216,.16)}
+.notas sup{font:600 15px/1.6 var(--sans);color:var(--cor);font-variant-numeric:tabular-nums}
+.notas h3{font-size:clamp(22px,3vw,30px);line-height:1.2}
+.notas p{grid-column:2;color:var(--cre2);max-width:60ch}
+
+/* passos: fio que desenha */
+.passos{list-style:none;position:relative;display:grid;gap:clamp(36px,6vw,56px);padding-left:56px;--fio:0}
+.passos::before,.passos::after{content:"";position:absolute;left:19px;top:8px;bottom:8px;width:2px;background:rgba(243,234,216,.14)}
+.passos::after{background:var(--cor);transform-origin:top;transform:scaleY(var(--fio))}
+.passos li{position:relative}
+.passos .bola{position:absolute;left:-56px;top:0;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--pet);border:2px solid var(--pet3);font:600 16px/1 var(--sans);font-variant-numeric:tabular-nums;z-index:1;transition:background-color .3s,border-color .3s,color .3s}
+.passos li.on .bola{background:var(--cor);border-color:var(--cor);color:#2a0f08}
+.passos h3{font-size:clamp(24px,3.4vw,34px);line-height:1.15;padding-top:2px}
+.passos p{color:var(--cre2);margin-top:8px;max-width:56ch}
+
+/* epílogo: contato em creme */
+.epilogo{background:var(--cre);color:var(--tinta)}
+.epilogo .rotulo{color:var(--cor-esc)}
+.grade-contato{display:grid;gap:clamp(28px,4vw,56px)}
+.ficha{display:grid;gap:22px}
+.ficha dl{display:grid;gap:18px}
+.ficha dt{font:600 13px/1.2 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#4b5f5d}
+.ficha dd{font-size:18px;margin-top:4px}
+.ficha dd a{text-decoration-color:var(--cor-esc);text-underline-offset:4px;display:inline-flex;align-items:center;min-height:48px}
+.agora{display:inline-flex;align-items:center;gap:10px;font-weight:600}
+.agora::before{content:"";width:10px;height:10px;border-radius:50%;background:#8a9a98}
+.agora[data-aberto="1"]::before{background:#1f8a5b}
+.agora[data-aberto="0"]::before{background:var(--cor-esc)}
+.semana{list-style:none;margin-top:12px}
+.semana li{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid rgba(22,48,47,.14);font-size:16px}
+.semana li span:last-child{font-variant-numeric:tabular-nums;text-align:right}
+.semana li[data-hoje]{font-weight:700;color:var(--cor-esc)}
+.utils{display:flex;flex-wrap:wrap;gap:10px}
+.util{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 18px;border-radius:999px;border:1px solid rgba(22,48,47,.25);background:none;color:var(--tinta);font:600 15px/1 var(--sans);text-decoration:none;cursor:pointer}
+.util:hover{background:rgba(22,48,47,.06)}
+.util svg{width:18px;height:18px;flex:none}
+/* mapa como prancha ilustrada do livro */
+.prancha{background:var(--cre2);padding:12px 12px 0;border-radius:4px 22px 22px 4px;box-shadow:-10px 0 0 -4px #d8cbb0}
+.mapa{position:relative;overflow:hidden;border-radius:2px 14px 14px 2px;background:var(--cre);min-height:300px}
+.mapa iframe{display:block;width:100%;height:100%;min-height:300px;border:0;filter:saturate(.6) sepia(.2)}
+.mapa__abrir{position:absolute;right:10px;top:10px;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 16px;border-radius:999px;background:var(--pet);color:var(--cre);font:600 15px/1 var(--sans);text-decoration:none}
+.mapa__abrir svg,.rotas svg{width:20px;height:20px;flex:none}
+.prancha figcaption{font:italic 400 17px/1.4 var(--serif);padding:14px 4px 10px;color:var(--tinta)}
+.prancha figcaption b{font:600 13px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--cor-esc);margin-right:8px;font-style:normal}
+.rotas{list-style:none;border-top:1px solid rgba(22,48,47,.2)}
+.rotas a{display:flex;align-items:center;gap:12px;min-height:56px;padding:0 6px;text-decoration:none;font:600 16px/1.2 var(--sans);color:var(--tinta);border-bottom:1px solid rgba(22,48,47,.12)}
+.rotas li:last-child a{border-bottom:0}
+.rotas a::after{content:"";flex:1;order:2;border-bottom:2px dotted rgba(22,48,47,.3);margin:0 4px;min-width:16px}
+.rotas a .seta{order:3;color:var(--cor-esc);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.rotas a:hover .seta{transform:translateX(4px)}
+.epilogo .btn--linha{color:var(--tinta);border-color:rgba(22,48,47,.3)}
+
+/* faq: notas finais numeradas, como notas de fim de livro */
+.faq{display:grid;gap:12px;counter-reset:nota}
+.faq details{counter-increment:nota;background:var(--pet2);border-radius:4px 16px 16px 4px;border-left:3px solid var(--pet3);transition:border-color .3s}
+.faq details[open]{border-left-color:var(--cor)}
+.faq summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;min-height:64px;padding:16px 18px;font:400 clamp(19px,2.4vw,23px)/1.3 var(--serif)}
+.faq summary::before{content:counter(nota,decimal-leading-zero);font:600 14px/1 var(--sans);font-variant-numeric:tabular-nums;color:var(--cor);letter-spacing:.06em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary svg{width:22px;height:22px;flex:none;color:var(--cre2);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.faq details[open] summary svg{transform:rotate(-90deg);color:var(--cor)}
+.faq details p{padding:0 18px 22px calc(18px + 2ch + 16px);color:var(--cre2);max-width:68ch}
+
+/* fim */
+.fim{text-align:left;padding:clamp(80px,14vw,160px) 0}
+.fim h2{font-size:clamp(34px,7vw,84px);line-height:1.02;max-width:14ch;text-wrap:balance}
+.fim h2 em{color:var(--cor)}
+.fim p{color:var(--cre2);max-width:52ch;margin-top:18px;font-size:clamp(17px,2vw,20px)}
+/* rodapé: sumário do livro */
+.rodape{background:var(--pet2);padding:clamp(48px,8vw,80px) 0 40px;color:var(--cre2)}
+.rodape .envolve{display:grid;gap:36px}
+.sumario{list-style:none;counter-reset:s;max-width:640px}
+.sumario a{display:flex;align-items:baseline;gap:12px;min-height:48px;padding-top:12px;text-decoration:none;color:var(--cre);font:400 19px/1.3 var(--serif)}
+.sumario a::after{content:"";flex:1;border-bottom:2px dotted rgba(243,234,216,.22);min-width:24px;order:2}
+.sumario .n{order:3;font:600 15px/1 var(--sans);font-variant-numeric:tabular-nums;color:var(--cor)}
+.sumario a:hover{color:var(--cor)}
+.colofao{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 24px;border-top:1px solid rgba(243,234,216,.12);padding-top:24px;font-size:16px}
+.colofao strong{font:italic 400 22px/1.2 var(--serif);color:var(--cre)}
+.colofao a{display:inline-flex;align-items:center;min-height:48px}
+
+/* marcador de página: CTA que surge depois do prólogo e recua quando a pessoa volta */
+.marcador{position:fixed;z-index:50;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr auto auto;gap:6px;
+  transform:translateY(calc(100% + 56px));visibility:hidden;transition:transform .45s cubic-bezier(.2,.8,.2,1),visibility 0s .45s}
+.marcador.ver,.marcador:focus-within{transform:none;visibility:visible;transition:transform .45s cubic-bezier(.2,.8,.2,1),visibility 0s}
+.marcador__cap{position:absolute;left:14px;bottom:100%;padding:6px 12px 5px;background:var(--cre);color:var(--tinta);border-radius:6px 6px 0 0;font:600 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;font-variant-numeric:tabular-nums}
+.marcador a{display:flex;align-items:center;gap:10px;min-height:60px;text-decoration:none;font:600 16px/1.1 var(--sans)}
+.marcador svg{width:22px;height:22px;flex:none}
+.marcador__wa{background:var(--cor);color:#2a0f08;padding:0 26px 0 18px;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 50%,100% 100%,0 100%);border-radius:10px 0 0 10px;box-shadow:0 10px 30px -10px rgba(0,0,0,.6)}
+.marcador__mini{flex-direction:column;justify-content:center;gap:4px !important;min-width:68px;padding:0 8px;background:var(--cre);color:var(--tinta);border-radius:10px;font-size:13px !important}
+.marcador__wa span{white-space:nowrap}
+@media (max-width:399px){.marcador .largo{display:none}}
+body{--barra:96px}
+
+@media (min-width:760px){
+  .grade-contato{grid-template-columns:1fr 1.15fr;align-items:start}
+  .mapa,.mapa iframe{min-height:440px}
+  .notas{grid-template-columns:1fr 1fr;column-gap:48px}
+}
+@media (min-width:1100px){
+  .marcador{left:auto;right:28px;width:min(500px,calc(100% - 56px))}
+  .pagina{grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;column-gap:48px}
+  .pagina__topo{grid-column:1/-1}
+  .pagina p{align-self:end}
+  .passos{grid-template-columns:repeat(3,1fr);padding-left:0;padding-top:64px;gap:40px}
+  .passos::before,.passos::after{left:20px;right:20px;top:19px;bottom:auto;width:auto;height:2px}
+  .passos::after{transform-origin:left;transform:scaleX(var(--fio))}
+  .passos .bola{left:0;top:-64px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .cap{height:auto}.cap__palco{position:static;height:auto;padding-block:96px}
+  .frase .w{color:var(--cre);transition:none}
+  .pagina{transform:none;opacity:1}
+  .passos{--fio:1}.passos .bola{background:var(--cor);border-color:var(--cor);color:#2a0f08}
+  .dica i{animation:none}
+  *{transition:none!important}
+}
+</style>
+{{ ef.estilo() }}
+</head>
+<body>
+{{ ef.progresso() }}
+{#- Jogo de ícones próprio: traço 1.6, pontas redondas, cantos arredondados, desenhado em grade 24. -#}
+{%- set A %}viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"{% endset %}
+{%- set ico_tel %}<svg {{ A }}><path d="M6.5 3.5h3l1.6 4.4-2 1.3a10.5 10.5 0 0 0 5.7 5.7l1.3-2 4.4 1.6v3a2 2 0 0 1-2.1 2A16 16 0 0 1 4.5 5.6a2 2 0 0 1 2-2.1z"/></svg>{% endset %}
+{%- set ico_wa %}<svg {{ A }}><path d="M4 20l1.3-3.9A8.5 8.5 0 1 1 8.6 19z"/><path d="M9 9.2c0 3 2.8 5.8 5.8 5.8l.9-1.6-1.8-.9-.8.8a4 4 0 0 1-2.4-2.4l.8-.8-.9-1.8z"/></svg>{% endset %}
+{%- set ico_pin %}<svg {{ A }}><path d="M12 21s-6.5-5.8-6.5-11.3a6.5 6.5 0 0 1 13 0C18.5 15.2 12 21 12 21z"/><circle cx="12" cy="9.7" r="2.3"/></svg>{% endset %}
+{%- set ico_nav %}<svg {{ A }}><path d="M4 11.2 20 4l-7.2 16-1.9-6.9z"/></svg>{% endset %}
+{%- set ico_maca %}<svg {{ A }}><path d="M12 7.5c1.5-1.8 5-1.6 6 1.4 1.2 3.6-1.6 10.6-4.2 10.6-.9 0-1.2-.5-1.8-.5s-.9.5-1.8.5C7.6 19.5 4.8 12.5 6 8.9c1-3 4.5-3.2 6-1.4zM12 7.5c0-1.6.8-3.2 2.5-3.5"/></svg>{% endset %}
+{%- set ico_seta %}<svg class="seta" {{ A }}><path d="M5 12h14M13 6l6 6-6 6"/></svg>{% endset %}
+{%- set ico_ext %}<svg {{ A }}><path d="M14 4h6v6M20 4l-9 9M18 14v4.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/></svg>{% endset %}
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<span class="trilho" aria-hidden="true"><i></i></span>
+
+<main id="conteudo">
+  <section class="prologo" data-cap="Prólogo">
+    <span class="prologo__cap" aria-hidden="true">I</span>
+    <div class="prologo__corpo">
+      <p class="rotulo">{{ lead.categoria }}{% if lead.bairro %} · {{ lead.bairro }}{% endif %} · Santarém</p>
+      <h1>{{ c.headline }}</h1>
+      <div class="acoes">
+        <a class="btn btn--cor" href="{{ d.wa_link }}">{{ ico_wa }}{{ c.cta }}</a>
+        <a class="btn btn--linha" href="{{ d.tel_link }}">{{ ico_tel }}Ligar</a>
+      </div>
+      {% if lead.endereco %}<p class="meta">{{ lead.endereco }}</p>{% endif %}
+      {% if nota %}
+      <figure class="epigrafe">
+        <p class="epigrafe__n">{{ nota }}</p>
+        <p class="epigrafe__de">de 5 estrelas, na voz de quem já veio</p>
+        <figcaption class="epigrafe__fonte">— Google{% if lead.avaliacoes %}, <span class="num">{{ lead.avaliacoes }}</span> avaliações{% endif %}</figcaption>
+      </figure>
+      {% endif %}
+      <p class="dica" aria-hidden="true"><i></i>Role para ler a história</p>
+    </div>
+  </section>
+
+  <section class="cap" id="cap-1" data-cap="Capítulo 1" aria-labelledby="cap1">
+    <div class="cap__palco"><div>
+      <p class="cap__titulo"><span class="n num" aria-hidden="true">1</span><span class="rotulo" id="cap1">O que fazemos</span></p>
+      <p class="frase" data-frase>{{ frase(c.subtitulo) }}</p>
+    </div></div>
+  </section>
+
+  <section class="secao" id="servicos" data-cap="Capítulo 2" aria-labelledby="t-serv">
+    <div class="envolve">
+      <div class="secao__cab"><p class="rotulo">Capítulo 2 · Serviços</p><h2 id="t-serv">Cada serviço, uma página</h2></div>
+      <ol class="paginas">
+        {% for s in c.servicos %}
+        <li class="pagina" >
+          <div class="pagina__topo"><span class="rotulo">Capítulo {{ loop.index }}</span><span class="num">{{ loop.index }} / {{ c.servicos|length }}</span></div>
+          <h3>{{ s.titulo }}</h3>
+          <p>{{ s.descricao }}</p>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </section>
+
+  {%- set dif_frase = c.diferenciais | map(attribute="titulo") | join(". ") %}
+  <section class="cap" id="cap-3" data-cap="Capítulo 3" aria-labelledby="cap3">
+    <div class="cap__palco"><div>
+      <p class="cap__titulo"><span class="n num" aria-hidden="true">3</span><span class="rotulo" id="cap3">Por que nós</span></p>
+      <p class="frase" data-frase>{{ frase(dif_frase ~ ".") }}</p>
+    </div></div>
+  </section>
+
+  <section class="secao" style="padding-top:0" data-cap="Capítulo 3" aria-label="Diferenciais em detalhe">
+    <div class="envolve">
+      <ol class="notas"{{ ef.at("revela") }}>
+        {% for x in c.diferenciais %}
+        <li><sup>{{ loop.index }}</sup><h3>{{ x.titulo }}</h3><p>{{ x.descricao }}</p></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </section>
+  {% if c.diferenciais | length > 1 %}{{ ef.cor("Capítulo 3 · Em resumo", c.diferenciais[-1].titulo, c.diferenciais[-1].descricao) }}{% endif %}
+
+  {% if "pilha" in efeitos %}{{ ef.pilha(c.passos, "Do primeiro contato ao atendimento", "Capítulo 4 · Como funciona", "passos") }}{% else %}
+  <section class="secao" id="passos" data-cap="Capítulo 4" aria-labelledby="t-passos">
+    <div class="envolve">
+      <div class="secao__cab"><p class="rotulo">Capítulo 4 · Como funciona</p><h2 id="t-passos">Do primeiro contato ao atendimento</h2></div>
+      <ol class="passos" data-passos>
+        {% for p in c.passos %}
+        <li><span class="bola" aria-hidden="true">{{ loop.index }}</span><h3><span class="sr">Passo {{ loop.index }}: </span>{{ p.titulo }}</h3><p>{{ p.descricao }}</p></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="secao epilogo" id="contato" data-cap="Capítulo 5" aria-labelledby="t-cont">
+    <div class="envolve">
+      <div class="secao__cab"><p class="rotulo">Capítulo 5 · Onde nos encontrar</p><h2 id="t-cont">Venha conversar</h2></div>
+      <div class="grade-contato">
+        <div class="ficha">
+          <dl>
+            <div><dt>Telefone</dt><dd><a class="num" href="{{ d.tel_link }}">{{ lead.telefone }}</a></dd></div>
+            {% if lead.endereco %}<div><dt>Endereço</dt><dd>{{ lead.endereco | replace("-", "‑") | replace(" ‑ ", " – ") }}</dd></div>{% endif %}
+            {% if horario %}
+            <div data-horario='{{ horario | tojson }}'><dt>Horário</dt><dd>
+              <span class="agora" data-agora>Horário de atendimento</span>
+              <ul class="semana">{% for h in horario %}<li data-dia="{{ loop.index0 }}"><span>{{ h.dia }}</span><span>{{ h.texto }}</span></li>{% endfor %}</ul>
+            </dd></div>
+            {% endif %}
+            {% if nota %}<div><dt>No Google</dt><dd><a href="{{ d.avaliar }}" target="_blank" rel="noopener">Deixe a sua avaliação</a></dd></div>{% endif %}
+          </dl>
+          <div class="utils">
+            {% if wa %}<a class="util" href="{{ d.wa_link }}">{{ ico_wa }}WhatsApp</a>{% endif %}
+            <a class="util" href="{{ d.tel_link }}">{{ ico_tel }}Ligar</a>
+            {% if vcf %}<a class="util" href="{{ vcf }}" download="contato.vcf"><svg {{ A }}><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>Salvar contato</a>{% endif %}
+            {% if lead.endereco %}<button class="util" type="button" data-copiar="{{ lead.endereco }}"><svg {{ A }}><rect x="8.5" y="8.5" width="11" height="11" rx="1.5"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/></svg><span data-copiar-rotulo>Copiar endereço</span></button>{% endif %}
+            <a class="util" href="{{ d.avaliar }}" target="_blank" rel="noopener"><svg {{ A }}><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>Avaliar no Google</a>
+          </div>
+        </div>
+        {% if d.mapa_src %}
+        <figure class="prancha" id="chegar">
+          <div class="mapa">
+            <iframe src="{{ d.mapa_src }}" loading="lazy" title="Mapa até {{ c.nome_exibicao }}" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <a class="mapa__abrir" href="{{ d.rota_google }}" target="_blank" rel="noopener">{{ ico_ext }}Abrir rota</a>
+          </div>
+          <figcaption><b>Prancha 5</b>O caminho até {{ c.nome_exibicao }}{% if lead.bairro %}, no {{ lead.bairro }}{% endif %}.</figcaption>
+          <ol class="rotas">
+            <li><a href="{{ d.rota_google }}" target="_blank" rel="noopener">{{ ico_pin }}Rota pelo Google Maps{{ ico_seta }}</a></li>
+            <li><a href="{{ d.rota_waze }}" target="_blank" rel="noopener">{{ ico_nav }}Rota pelo Waze{{ ico_seta }}</a></li>
+            <li><a href="{{ d.rota_apple }}" target="_blank" rel="noopener">{{ ico_maca }}Rota pelo Apple Mapas{{ ico_seta }}</a></li>
+          </ol>
+        </figure>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  {% if c.faq %}
+  <section class="secao" id="notas" data-cap="Notas" aria-labelledby="t-faq">
+    <div class="envolve">
+      <div class="secao__cab"><p class="rotulo">Notas finais · Dúvidas</p><h2 id="t-faq">Perguntas frequentes</h2></div>
+      <div class="faq">
+        {% for f in c.faq %}
+        <details><summary>{{ f.pergunta }}<svg {{ A }}><path d="M9 6l6 6-6 6"/></svg></summary><p>{{ f.resposta }}</p></details>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="fim" data-cap="Epílogo" aria-labelledby="t-fim">
+    <div class="envolve">
+      <p class="rotulo">Epílogo</p>
+      <h2 id="t-fim" style="margin-top:16px">{{ c.cta_final_titulo }}</h2>
+      <p>{{ c.cta_final_texto }}</p>
+      <div class="acoes">
+        <a class="btn btn--cor" href="{{ d.wa_link }}">{{ ico_wa }}{{ c.cta }}</a>
+        <a class="btn btn--linha" href="{{ d.tel_link }}">{{ ico_tel }}Ligar</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape"><div class="envolve">
+  <nav aria-label="Sumário">
+    <p class="rotulo" style="margin-bottom:8px">Sumário</p>
+    <ol class="sumario">
+      <li><a href="#cap-1">O que fazemos<span class="n">1</span></a></li>
+      <li><a href="#servicos">Serviços<span class="n">2</span></a></li>
+      <li><a href="#cap-3">Por que nós<span class="n">3</span></a></li>
+      <li><a href="#passos">Como funciona<span class="n">4</span></a></li>
+      <li><a href="#contato">Onde nos encontrar<span class="n">5</span></a></li>
+      {% if c.faq %}<li><a href="#notas">Notas finais<span class="n">6</span></a></li>{% endif %}
+    </ol>
+  </nav>
+  <div class="colofao">
+    <strong>{{ c.nome_exibicao }}</strong>
+    <span>{% if lead.endereco %}{{ lead.endereco }} · {% endif %}<a class="num" href="{{ d.tel_link }}">{{ lead.telefone }}</a></span>
+  </div>
+</div></footer>
+
+<nav class="barra-fixa marcador" aria-label="Falar com {{ c.nome_exibicao }}" data-marcador>
+  <span class="marcador__cap" data-cap-atual>Prólogo</span>
+  <a class="marcador__wa" href="{{ d.wa_link }}">{% if wa %}{{ ico_wa }}<span><span class="largo">Chamar no </span>WhatsApp</span>{% else %}{{ ico_tel }}Ligar agora{% endif %}</a>
+  {% if wa %}<a class="marcador__mini" href="{{ d.tel_link }}">{{ ico_tel }}Ligar</a>{% endif %}
+  {% if d.mapa_src %}<a class="marcador__mini" href="#chegar">{{ ico_pin }}Chegar</a>{% endif %}
+</nav>
+
+{{ d.script() }}
+<script>
+(() => {
+  // Hífen entre letras/números vira hífen inseparável: "Salário-maternidade" e CEP não quebram no meio.
+  for (const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); w.nextNode();) if (/\w-\w/.test(w.currentNode.data)) w.currentNode.data = w.currentNode.data.replace(/(\w)-(?=\w)/g, "$1\u2011");
+  // Leitura guiada pelo scroll: só lê posições num rAF; nunca intercepta toque nem rolagem.
+  const movimento = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const raiz = document.documentElement, trilho = document.querySelector(".trilho i"), rotulo = document.querySelector("[data-cap-atual]");
+  // Marcador: surge depois do prólogo enquanto se lê para baixo; recua quando a pessoa volta para cima.
+  const marcador = document.querySelector("[data-marcador]"), prologo = document.querySelector(".prologo");
+  let ultimoY = scrollY;
+  const caps = [...document.querySelectorAll("[data-cap]")];
+  const frases = [...document.querySelectorAll("[data-frase]")].map((f) => ({ f, sec: f.closest(".cap"), ws: [...f.querySelectorAll(".w")] }));
+  const paginas = [...document.querySelectorAll(".pagina")];
+  const passos = document.querySelector("[data-passos]"), itens = passos ? [...passos.children] : [];
+  let pedido = false;
+  const quadro = () => {
+    pedido = false;
+    const vh = innerHeight, max = raiz.scrollHeight - vh;
+    trilho.style.setProperty("--lido", max > 0 ? (scrollY / max).toFixed(4) : 0);
+    let atual = caps[0];
+    for (const s of caps) if (s.getBoundingClientRect().top < vh * 0.45) atual = s;
+    if (rotulo.textContent !== atual.dataset.cap) rotulo.textContent = atual.dataset.cap;
+    const y = scrollY, desceu = y > ultimoY + 2, subiu = y < ultimoY - 2;
+    if (y < prologo.offsetHeight * 0.8) marcador.classList.remove("ver");
+    else if (desceu || y >= max - 4) marcador.classList.add("ver");
+    else if (subiu) marcador.classList.remove("ver");
+    ultimoY = y;
+    if (!movimento) return;
+    for (const { sec, ws } of frases) {
+      const r = sec.getBoundingClientRect(), p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - vh) * 1.15));
+      const n = Math.round(p * ws.length);
+      ws.forEach((w, i) => w.classList.toggle("on", i < n));
+    }
+    for (const pg of paginas) { const r = pg.getBoundingClientRect(); pg.style.setProperty("--v", Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.45))).toFixed(3)); }
+    if (passos) {
+      const r = passos.getBoundingClientRect(), p = Math.min(1, Math.max(0, (vh * 0.7 - r.top) / r.height));
+      passos.style.setProperty("--fio", p.toFixed(3));
+      itens.forEach((li, i) => li.classList.toggle("on", p >= i / itens.length + 0.02));
+    }
+  };
+  const agenda = () => { if (!pedido) { pedido = true; requestAnimationFrame(quadro); } };
+  addEventListener("scroll", agenda, { passive: true });
+  addEventListener("resize", agenda, { passive: true });
+  quadro();
+})();
+</script>
+{{ ef.motor() }}
+</body>
+</html>

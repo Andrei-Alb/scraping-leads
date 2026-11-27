@@ -1,0 +1,48 @@
+ordem: 6
+nome: Advocacia
+categorias: advog|jurídic|advocacia|previdenc
+voz: Sóbrio, formal e informativo, conforme o Código de Ética da OAB. Sem apelo comercial e sem promessa de resultado.
+tom: liberal
+secoes:
+- áreas de atuação
+- como é o primeiro contato
+- documentos
+- dúvidas
+faq:
+- Como marco um atendimento?
+- Quais documentos devo levar?
+- Atendem por videochamada?
+- Onde fica o escritório?
+icones:
+- balanca
+- documento
+- calendario
+- predio
+templates:
+- '04'
+- '01'
+- '03'
+- '07'
+fontes:
+  titulo:
+  - Libre Baskerville
+  - serif
+  texto:
+  - Source Sans 3
+  - sans-serif
+claro:
+  fundo: '#f6f4ef'
+  superficie: '#ffffff'
+  texto: '#1b1d24'
+  suave: '#4b4f5c'
+  acentos:
+  - '#1f3a5f'
+  - '#5a1f2b'
+  destaque: '#d9c9a3'
+escuro:
+  fundo: '#0f1218'
+  superficie: '#171c25'
+  texto: '#ece8df'
+  suave: '#b3ad9f'
+  acento: '#c9ad73'
+  destaque: '#e6d4a8'

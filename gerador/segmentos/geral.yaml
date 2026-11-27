@@ -1,0 +1,52 @@
+ordem: 99
+nome: Negócio local
+categorias: ''
+voz: Humano, direto e local.
+tom: tecnico
+secoes:
+- serviços
+- como funciona
+- onde fica
+- dúvidas
+faq:
+- Como faço o pedido?
+- Qual o horário?
+- Onde fica?
+- Aceitam Pix?
+icones:
+- loja
+- relogio
+- mapa
+- telefone
+templates:
+- '01'
+- '02'
+- '03'
+- '04'
+- '05'
+- '06'
+- '07'
+- 08
+fontes:
+  titulo:
+  - Manrope
+  - sans-serif
+  texto:
+  - Inter
+  - sans-serif
+claro:
+  fundo: '#f5f4f1'
+  superficie: '#ffffff'
+  texto: '#1a1a1a'
+  suave: '#4f4f4f'
+  acentos:
+  - '#1d4ed8'
+  - '#b4261c'
+  destaque: '#fcd34d'
+escuro:
+  fundo: '#111111'
+  superficie: '#1b1b1b'
+  texto: '#f2f2f2'
+  suave: '#b8b8b8'
+  acento: '#7aa7ff'
+  destaque: '#fcd34d'

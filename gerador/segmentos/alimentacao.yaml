@@ -1,0 +1,48 @@
+ordem: 9
+nome: Alimentação
+categorias: restaurant|lanchon|padar|pizzar|\bbar\b|churrasc|hamburg|sorvet|açaí|café|açougue|doce|confeit|peixar|marmit|comida
+voz: Caloroso e com apetite. Fala de sabor, cardápio e de pedir sem complicação.
+tom: tecnico
+secoes:
+- cardápio
+- como pedir
+- entrega e retirada
+- dúvidas
+faq:
+- Fazem entrega?
+- Qual o horário?
+- Dá para reservar mesa?
+- Aceitam Pix?
+icones:
+- prato
+- moto
+- relogio
+- estrela
+templates:
+- '05'
+- 08
+- '07'
+- '02'
+fontes:
+  titulo:
+  - Bitter
+  - serif
+  texto:
+  - Nunito
+  - sans-serif
+claro:
+  fundo: '#fcf5ea'
+  superficie: '#ffffff'
+  texto: '#2a1a0e'
+  suave: '#634b36'
+  acentos:
+  - '#a8321b'
+  - '#8a5300'
+  destaque: '#ffc65c'
+escuro:
+  fundo: '#1a110a'
+  superficie: '#261a10'
+  texto: '#fbeedd'
+  suave: '#d2b89a'
+  acento: '#ff9a5c'
+  destaque: '#ffd08a'
